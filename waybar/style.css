@@ -25,6 +25,6 @@ tooltip {
 	border-bottom: 2px solid white;
 }
 
-#clock, #cpu, #disk, #custom-power {
-	padding: 0 10px;
+#clock, #tray, #cpu, #disk, #memory, #custom-power {
+	padding: 0 7px;
 }

@@ -26,6 +26,10 @@
       "format": "⏻",
       "on-click": "bash $HOME/.config/waybar/scripts/poweroff.sh"
     },
+    "tray": {
+      "icon-size": 18,
+      "spacing": 3
+  },
     "cpu": {
       "format": " {usage}%",
       "interval": 1
@@ -64,10 +68,6 @@
     "position": "top",
     "margin-left": 15,
     "margin-right": 15,
-    "margin-top": 15,
-    "tray": {
-      "icon-size": 24,
-      "spacing": 10
-    }
+    "margin-top": 15
   }
 ]
