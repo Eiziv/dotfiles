@@ -1,0 +1,30 @@
+* {
+	border: none;
+	border-radius: 17;
+	font-family: Roboto;
+	font-size: 12px;
+	background: transparent;
+	color: white;
+	min-height: 0;
+	font-weight: bolder;
+}
+
+window#waybar {
+	background: rgba(0, 0, 0, 0.1);
+}
+
+tooltip {
+	background: rgba(0, 0, 0, 0.1);
+}
+
+#workspaces button {
+
+}
+
+#workspaces button.focused {
+	border-bottom: 2px solid white;
+}
+
+#clock, #cpu, #disk, #custom-power {
+	padding: 0 10px;
+}

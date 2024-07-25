@@ -1,0 +1,73 @@
+[
+  {
+    "battery": {
+      "bat": "BAT0",
+      "format": "{icon} {capacity}%",
+      "format-icons": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "interval": 1,
+      "states": {
+        "critical": 10,
+        "warning": 20
+      },
+      "tooltip-format": "{timeTo}"
+    },
+    "clock": {
+      "format": "{:%H:%M}",
+      "interval": 1,
+      "tooltip": false 
+    },
+    "custom/power": {
+      "format": "⏻",
+      "on-click": "bash $HOME/.config/waybar/scripts/poweroff.sh"
+    },
+    "cpu": {
+      "format": " {usage}%",
+      "interval": 1
+    },
+    "disk": {
+      "format": " {percentage_used}%",
+      "interval": 1,
+      "path": "/"
+    },
+    "height": 36,
+    "hyprland/workspaces": {
+      "format": "{name}",
+      "on-click": "activate",
+      "sort-by": "number"
+    },
+    "layer": "top",
+    "memory": {
+      "format": " {percentage}%",
+      "interval": 1
+    },
+    "modules-center": [
+      "clock"
+    ],
+    "modules-left": [
+      "hyprland/workspaces",
+      "hyprland/window"
+    ],
+    "modules-right": [
+      "tray",
+      "battery",
+      "cpu",
+      "memory",
+      "disk",
+      "custom/power"
+    ],
+    "position": "top",
+    "margin-left": 15,
+    "margin-right": 15,
+    "margin-top": 15,
+    "tray": {
+      "icon-size": 24,
+      "spacing": 10
+    }
+  }
+]
