@@ -27,7 +27,6 @@
       "on-click": "bash $HOME/.config/waybar/scripts/poweroff.sh"
     },
     "tray": {
-      "icon-size": 18,
       "spacing": 3
     },
     "cpu": {
