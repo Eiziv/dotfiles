@@ -18,11 +18,13 @@ tooltip {
 }
 
 #workspaces button {
-
+	border-radius: 0;
+	margin-left: 1;
 }
 
-#workspaces button.focused {
-	border-bottom: 2px solid white;
+#workspaces button.active {
+	border-bottom: solid white;
+	border-bottom-width: 1px;
 }
 
 #clock, #tray, #cpu, #disk, #memory, #custom-power {
