@@ -20,7 +20,7 @@
     "clock": {
       "format": "{:%H:%M}",
       "interval": 1,
-      "tooltip": false 
+      "tooltip": false
     },
     "custom/power": {
       "format": "⏻",
@@ -29,7 +29,7 @@
     "tray": {
       "icon-size": 18,
       "spacing": 3
-  },
+    },
     "cpu": {
       "format": " {usage}%",
       "interval": 1
