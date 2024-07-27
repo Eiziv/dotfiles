@@ -1,12 +1,12 @@
 * {
 	border: none;
-	border-radius: 17;
+	border-radius: 17px;
 	font-family: Roboto;
 	font-size: 12px;
+  font-weight: bolder;
 	background: transparent;
 	color: white;
 	min-height: 0;
-	font-weight: bolder;
 }
 
 window#waybar {
@@ -19,12 +19,13 @@ tooltip {
 
 #workspaces button {
 	border-radius: 0;
-	margin-left: 1;
+	margin-left: 1px;
 }
 
 #workspaces button.active {
-	border-bottom: solid white;
-	border-bottom-width: 1px;
+	border-bottom: 2px solid;
+	border-image: linear-gradient(to right, transparent 45%, white 45%, white 55%, transparent 55%) 10;
+	margin-top: 2px;
 }
 
 #clock, #tray, #cpu, #disk, #memory, #custom-power {
