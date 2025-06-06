@@ -3,8 +3,8 @@ $mod = SUPER
 #GENERAL#
 
 #Monitor settings
-monitor=DP-3,3440x1440@175,0x0,1,vrr,0
-monitor=DP-1,2560x1440@144,3440x-1020,1,transform,1,vrr,0
+monitor=DP-3,3440x1440@175,0x0,1
+monitor=DP-1,2560x1440@144,3440x-1020,1,transform,1
 #monitor=DP-2,disable
 
 # WS on DP-1
@@ -16,7 +16,7 @@ workspace = 3, monitor:DP-1, persistent:true
 workspace = 4, monitor:DP-1, persistent:true
 
 
-windowrule = float, title:^(RuneLite)$
+windowrulev2 = float, title:^(RuneLite)$
 #windowrulev2 = maxsize 1808 1153,title:^(RuneLite)$
 #windowrulev2 = maxsize 1808 1153,title:^(RuneLite)$
 
@@ -27,29 +27,21 @@ layerrule = blur,walker
 layerrule = ignorezero,walker
 
 general {
-	border_size         = 2
-	gaps_in             = 5
-	gaps_out            = 17
-	layout              = dwindle
-	col.active_border   = rgb(aaffff)
+	gaps_in           = 5
+	gaps_out          = 17
+	border_size       = 2
+	col.active_border = rgb(aaffff)
+	layout            = dwindle
     col.inactive_border = rgba(00000000)
 }
 
 decoration {
 	rounding            = 10
-
 	blur {
 		enabled           = true
 		size              = 9
 		passes            = 3
 		new_optimizations = true
-	}
-
-	shadow {
-		enabled      = false
-		render_power = 3
-		range        = 4
-		color        = rgba(1a1a1aee)
 	}
 }
 
@@ -74,14 +66,13 @@ misc {
 bind = $mod SHIFT, S,           exec,           /home/vizie/.script/screenshot.sh select upload
 bind = $mod,       Return,      exec,           walker
 bind = $mod,       T,           exec,           kitty
-bind = $mod,       W,           exec,           firefox
+bind = $mod,       W,           exec,           floorp
 bind = $mod,       Q,           killactive,
 bind = $mod,       F,           togglefloating,
 bind = $mod,       mouse_down,  workspace,	    m+1
 bind = $mod,       mouse_up,    workspace,	    m-1
 bindm = $mod,      mouse:272,   movewindow
 bindm = $mod,      mouse:273,   resizewindow
-bind = $mod,       Delete,      exit
 
 
 #EXEC#

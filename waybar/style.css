@@ -13,6 +13,10 @@ window#waybar {
 	background: rgba(0, 0, 0, 0.1);
 }
 
+window#waybar #tray menu{
+	background: rgba(0, 0, 0, 0.1);
+}
+
 tooltip {
 	background: rgba(0, 0, 0, 0.1);
 }
