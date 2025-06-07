@@ -17,6 +17,14 @@ window#waybar #tray menu{
 	background: rgba(0, 0, 0, 0.1);
 }
 
+#tray menu :hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+#tray menu :hover label { 
+    background: rgba(0, 0, 0, 0.1);
+}
+
 tooltip {
 	background: rgba(0, 0, 0, 0.1);
 }
@@ -24,6 +32,11 @@ tooltip {
 #workspaces button {
 	border-radius: 0;
 	margin-left: 1px;
+}
+
+#tray window decoration{
+   border-style: none;
+   box-shadow: none;
 }
 
 #workspaces button.active {
