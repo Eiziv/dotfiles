@@ -30,6 +30,24 @@
       "icon-size": 18,
       "spacing": 10
     },
+    "pulseaudio": {
+      "scroll-step": 5,
+      "format": "<span>{icon}  {volume}%</span><span>{format_source}</span>",
+      "format-bluetooth": " {icon} {volume}% {format_source}",
+      "format-bluetooth-muted": "  {icon} {format_source}",
+      "format-muted": "  {format_source}",
+      "format-source": " {volume}%",
+      "format-source-muted": "",
+      "format-icons": {
+        "default": [
+          "",
+          "",
+          ""
+        ]
+      },
+      "on-click": "pavucontrol",
+      "on-click-right": "foot -a pw-top pw-top"
+    },
     "cpu": {
       "format": " {usage}%",
       "interval": 1
@@ -60,6 +78,7 @@
     "modules-right": [
       "tray",
       "battery",
+      "pulseaudio",
       "cpu",
       "memory",
       "disk",
