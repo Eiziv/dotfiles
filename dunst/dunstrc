@@ -1,0 +1,44 @@
+[global]
+monitor = 0
+follow = mouse
+alignment = center
+width = 360
+offset = 15
+origin = top-right
+padding = 12
+horizontal_padding = 12
+frame_width = 0
+markup = full
+icon_position = off
+font = "DejaVu Sans Mono 10"
+stack_duplicates = true
+hide_duplicate_count = true
+separator_height = 0
+fullscreen = pushback
+corner_radius = 15
+progress_bar = true
+
+
+[urgency_low]
+timeout = 4
+background = "#25252501"
+foreground = "#ffffff"
+frame_color = "#25252501"
+
+[urgency_normal]
+timeout = 8
+background = "#25252501"
+foreground = "#ffffff"
+frame_color = "#25252501"
+
+[urgency_critical]
+timeout = 16
+background = "#25252501"
+foreground = "#ffffff"
+frame_color = "#25252501"
+
+[status]
+category = status
+set_stack_tag = status
+history_ignore = yes
+timeout = 2
