@@ -18,9 +18,36 @@
       "tooltip-format": "{timeTo}"
     },
     "clock": {
-      "format": "{:%H:%M}",
-      "interval": 1,
-      "tooltip": false
+        "format": "{:%H:%M}",
+        "format-alt": "{:%A, %B %d, %Y (%R)}",
+        "tooltip-format": "<tt><big>{calendar}</big></tt>",
+        "calendar": {
+              "timezones": [
+        "Etc/UTC",
+        "America/New_York",
+        "America/Montevideo",
+        "America/Los_Angeles",
+        "Asia/Tokyo"
+    ]
+                    "mode"          : "month",
+                    "mode-mon-col"  : 3,
+                    "weeks-pos"     : "right",
+                    "on-scroll"     : 1,
+                    "format": {
+                              "months":     "<span color='#ffead3'><b>{}</b></span>",
+                              "days":       "<span color='#ecc6d9'><b>{}</b></span>",
+                              "weeks":      "<span color='#99ffdd'><b>W{:%V}</b></span>",
+                              "weekdays":   "<span color='#ffcc66'><b>{}</b></span>",
+                              "today":      "<span color='#ff6699'><b><u>{}</u></b></span>"
+                              }
+                    },
+        "actions":  {
+                    "on-click-right": "mode",
+                    "on-scroll-up": "tz_up",
+                    "on-scroll-down": "tz_down",
+                    "on-scroll-up": "shift_up",
+                    "on-scroll-down": "shift_down"
+                    }
     },
     "custom/power": {
       "format": "⏻",
