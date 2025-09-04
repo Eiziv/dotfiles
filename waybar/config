@@ -22,13 +22,6 @@
         "format-alt": "{:%A, %B %d, %Y (%R)}",
         "tooltip-format": "<tt><big>{calendar}</big></tt>",
         "calendar": {
-              "timezones": [
-        "Etc/UTC",
-        "America/New_York",
-        "America/Montevideo",
-        "America/Los_Angeles",
-        "Asia/Tokyo"
-    ]
                     "mode"          : "month",
                     "mode-mon-col"  : 3,
                     "weeks-pos"     : "right",
