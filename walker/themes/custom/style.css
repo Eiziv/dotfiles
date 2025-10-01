@@ -1,0 +1,15 @@
+* {
+  background: none;
+  border: none;
+  box-shadow: none;
+  color: #eee;
+  font-family: JetBrains Mono Nerd Font Propo;
+  font-size: 12pt;
+  outline: none;
+}
+
+.box-wrapper {
+  padding: 20px;
+  border-radius: 20px;
+  background: rgba(0,0,0,0.2);
+}
