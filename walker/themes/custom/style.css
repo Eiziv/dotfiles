@@ -6,10 +6,11 @@
   font-family: JetBrains Mono Nerd Font Propo;
   font-size: 12pt;
   outline: none;
+  all: unset;
 }
 
 .box-wrapper {
-  padding: 20px;
+  padding: 25px;
   border-radius: 20px;
   background: rgba(0,0,0,0.2);
 }
@@ -22,4 +23,10 @@ child {
 child:selected, child:hover {
   background: rgba(0, 0, 0, 0.1);
   border-radius: 10px;
+}
+
+.error {
+  padding: 10px;
+  background: red;
+  color: red;
 }

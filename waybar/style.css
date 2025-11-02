@@ -1,7 +1,7 @@
 * {
 	border: none;
 	border-radius: 17px;
-	font-family: Roboto;
+	font-family: NotoSans Nerd Font Regular;
 	font-size: 12px;
     font-weight: bolder;
 	background: transparent;
@@ -47,4 +47,12 @@ tooltip {
 
 #clock, #tray, #pulseaudio, #cpu, #disk, #memory, #custom-power {
 	padding: 0 7px;
+}
+
+.imsh-cast-monitor.recording {
+    color: #f00;
+}
+
+.imsh-cast-monitor.error {
+    color: #ff0;
 }

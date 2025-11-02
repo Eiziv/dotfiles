@@ -72,6 +72,12 @@
       "format": " {usage}%",
       "interval": 1
     },
+    "custom/imsh-cast-monitor": {
+      "format": "{text}",
+      "exec": "/home/vizie/.nix-profile/bin/imsh-cast-monitor",
+      "return-type": "json",
+      "hide-empty-text": true
+    },
     "disk": {
       "format": " {percentage_used}%",
       "interval": 1,
@@ -89,6 +95,7 @@
       "interval": 1
     },
     "modules-center": [
+      "custom/imsh-cast-monitor",
       "clock"
     ],
     "modules-left": [
