@@ -42,7 +42,7 @@ child:selected, child:hover { /* Selected in list */
   min-height: 35px;
 }
 
-.item-subtext {
+.item-subtext { /* Small text under primare app name */
   font-size: 12px;
   opacity: 0.8;
 }
