@@ -27,8 +27,8 @@ child:selected, child:hover { /* Selected in list */
 
 .error { /* Error */
   padding: 10px;
-  background: red;
-  color: red;
+  background: rgba(255, 100, 77, 1);
+  color: hsl(0, 0, 95);
 }
 
 .input { /* Searchbar */
