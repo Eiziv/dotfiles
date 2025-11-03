@@ -2,7 +2,6 @@
   background: none;
   border: none;
   box-shadow: none;
-  color: #eee;
   font-family: JetBrains Mono Nerd Font Propo;
   font-size: 12pt;
   outline: none;
@@ -12,21 +11,38 @@
 .box-wrapper {
   padding: 25px;
   border-radius: 20px;
-  background: rgba(0,0,0,0.2);
+  background: rgba(0,0,0,0.1);
 }
 
-child {
+child { /* All text */
   padding: 8px;
   border-radius: 2px;
+  color: hsl(0, 0, 95);
 }
 
-child:selected, child:hover {
+child:selected, child:hover { /* Selected in list */
   background: rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
+  border-radius: 10px;  
 }
 
-.error {
+.error { /* Error */
   padding: 10px;
   background: red;
   color: red;
+}
+
+.input { /* Searchbar */
+  background: rgba(0,0,0,0.1);
+  border-radius: 10px;
+  padding: 15px;
+}
+
+.item-box {
+  border-radius: 10px;
+  min-height: 35px;
+}
+
+.item-subtext {
+  font-size: 12px;
+  opacity: 0.8;
 }
