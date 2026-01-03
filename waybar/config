@@ -47,7 +47,7 @@
       "on-click": "bash $HOME/.config/waybar/scripts/poweroff.sh"
     },
     "tray": {
-      "icon-size": 18,
+      "icon-size": 17,
       "spacing": 10
     },
     "pulseaudio#sink": {
