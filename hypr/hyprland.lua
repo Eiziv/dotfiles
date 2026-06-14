@@ -190,7 +190,7 @@ hl.config({
 
 hl.on("hyprland.start", function()
     hl.exec_cmd("hyprpaper")
-    hl.exec_cmd("env LC_TIME=en_GB.UTF-8 waybar")
+    -- hl.exec_cmd("env LC_TIME=en_GB.UTF-8 waybar")
     hl.exec_cmd("dunst")
     hl.exec_cmd("walker --gapplication-service")
     hl.exec_cmd("elephant")
