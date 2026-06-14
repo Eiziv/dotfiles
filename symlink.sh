@@ -7,3 +7,4 @@ ln kitty ~/.config/kitty
 ln walker ~/.config/walker
 ln waybar ~/.config/waybar
 ln elephant ~/.config/elephant
+ln nvim ~/.config/nvim

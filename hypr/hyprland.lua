@@ -9,15 +9,15 @@ hl.monitor({
     output = "HDMI-A-2",
     mode = "2560x1440@280",
     position = "0x0",
-    scale = "1",
+    scale = 1,
     vrr = 0,
 })
 
 hl.monitor({
     output = "DP-1",
     mode = "2560x1440@144",
-    position = "2560x0",
-    scale = "1",
+    position = "2560x-900",
+    scale = 1,
     transform = 1,
     vrr = 0,
 })
@@ -90,7 +90,7 @@ hl.layer_rule({
         namespace = "waybar",
     },
     blur = true,
-    -- TODO: manual review — disable "ignore_alpha" has no layer_rule directive analog
+    ignore_alpha = 0,
     blur_popups = true,
 })
 
@@ -99,8 +99,8 @@ hl.layer_rule({
     match = {
         namespace = "walker",
     },
+    ignore_alpha = 0,
     blur = true,
-    -- TODO: manual review — disable "ignore_alpha" has no layer_rule directive analog
 })
 
 hl.layer_rule({
@@ -108,13 +108,13 @@ hl.layer_rule({
     match = {
         namespace = "notifications",
     },
+    ignore_alpha = 0,
     blur = true,
-    -- TODO: manual review — disable "ignore_alpha" has no layer_rule directive analog
 })
 
-hl.bind(mod .. " + SHIFT + S", hl.dsp.exec_cmd("imsh-shot area -Cufa@~/.config/keys/scrnis -s1"))
-hl.bind(mod .. " + SHIFT + F", hl.dsp.exec_cmd("imsh-shot screen -Cua@~/.config/keys/scrnis"))
-hl.bind(mod .. " + SHIFT + R", hl.dsp.exec_cmd("imsh-cast -Cua@~/.config/keys/scrnis"))
+hl.bind(mod .. " + SHIFT + S", hl.dsp.exec_cmd("/nix/store/bymxsrjyrphiz7ds61mw9fcg34h57x02-imsh-shot/bin/imsh-shot area -Cufa@~/.config/keys/scrnis -s1"))
+hl.bind(mod .. " + SHIFT + F", hl.dsp.exec_cmd("/nix/store/bymxsrjyrphiz7ds61mw9fcg34h57x02-imsh-shot/bin/imsh-shot screen -Cua@~/.config/keys/scrnis"))
+hl.bind(mod .. " + SHIFT + R", hl.dsp.exec_cmd("/nix/store/bymxsrjyrphiz7ds61mw9fcg34h57x02-imsh-shot/bin/imsh-cast -Cua@~/.config/keys/scrnis"))
 hl.bind(mod .. " + Return", hl.dsp.exec_cmd("walker"))
 hl.bind(mod .. " + T", hl.dsp.exec_cmd("kitty"))
 hl.bind(mod .. " + W", hl.dsp.exec_cmd("firefox"))
@@ -132,11 +132,8 @@ hl.env("XDG_SESSION_TYPE", "wayland")
 hl.env("GBM_BACKEND", "nvidia-drm")
 hl.env("__GLX_VENDOR_LIBRARY_NAME", "nvidia")
 hl.env("XCURSOR_THEME", "BreezeX-Black")
-hl.env("HYPRCURSOR_THEME", "BreezeX-Black-hyprcursor")
 hl.env("XCURSOR_SIZE", "28")
-hl.env("HYPRCURSOR_SIZE", "28")
 hl.env("QT_QPA_PLATFORMTHEME", "qt6ct")
-hl.env("GTK_THEME", "Adwaita:dark")
 
 hl.config({
     general = {
@@ -187,8 +184,7 @@ hl.config({
     --ENVIROMENT#
     --CURSOR#
     cursor = {
-        no_hardware_cursors = false,
-        enable_hyprcursor = true,
+        no_hardware_cursors = true,
     },
 })
 
@@ -196,12 +192,14 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("hyprpaper")
     hl.exec_cmd("env LC_TIME=en_GB.UTF-8 waybar")
     hl.exec_cmd("dunst")
-    hl.exec_cmd("/usr/lib/polkit-kde-authentication-agent-1")
     hl.exec_cmd("walker --gapplication-service")
     hl.exec_cmd("elephant")
     hl.exec_cmd("blueman-applet")
     hl.exec_cmd("nm-applet --indicator")
     hl.exec_cmd("dbus-update-activation-environment --systemd --all")
     hl.exec_cmd("xembedsniproxy")
+    hl.exec_cmd("systemctl --user start hyprpolkitagent")
+   -- hl.exec_cmd("gsettings set org.gnome.desktop.interface color-scheme prefer-dark")
+   -- hl.exec_cmd("gsettings set org.gnome.desktop.interface gtk-theme Adwaita-dark")
 end)
 
