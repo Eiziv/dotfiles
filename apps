@@ -1,4 +1,5 @@
 Applications            | Why
 
 nwg-look                | Application to choose theme (Important for Hyprcursors to work)
-geetd + greetd-gtkgreet | Login 
+geetd + greetd-gtkgreet | Login
+go-yq                   | Needed for symlink.sh
