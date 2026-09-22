@@ -1,0 +1,172 @@
+;; Control center flyout, opened from the Waybar button (scripts/toggle.sh).
+;; Two windows: `cc-closer` is an invisible click-catcher (click outside = close),
+;; `control-center` is the panel itself. Both take a `monitor` argument (a number),
+;; which scripts/toggle.sh fills in with the monitor you clicked on.
+
+;; ---------------------------------------------------------------------------
+;; State
+;; ---------------------------------------------------------------------------
+
+(defvar sinks_open false)
+(defvar confirm "none") ;; none | logout | reboot | poweroff
+
+(deflisten audio
+  :initial '{"vol":0,"muted":false,"mic":0,"mic_muted":false,"sink":"","sinks":[]}'
+  "python3 $HOME/.config/waybar/eww/scripts/audio.py")
+
+(defpoll mouse
+  :interval "30s"
+  :initial '{"text":"","percentage":0,"class":"","tooltip":"","label":"Not connected","connected":false}'
+  "bash $HOME/.config/waybar/scripts/mouse-battery.sh")
+
+(defpoll bt
+  :interval "2s"
+  :initial '{"available":false,"on":false,"device":"","label":"Unavailable"}'
+  "bash $HOME/.config/waybar/eww/scripts/bluetooth.sh")
+
+(defpoll disk
+  :interval "30s"
+  :initial "0"
+  "df --output=pcent / | tail -1 | tr -dc '0-9'")
+
+;; ---------------------------------------------------------------------------
+;; Windows
+;; ---------------------------------------------------------------------------
+
+(defwindow cc-closer [monitor]
+  :monitor monitor
+  :geometry (geometry :x "0px" :y "0px" :width "100%" :height "100%" :anchor "top left")
+  :stacking "overlay"
+  :namespace "eww-cc-closer"
+  (eventbox :class "closer"
+            :timeout "2s"
+            :onclick "${EWW_CMD} close control-center cc-closer; ${EWW_CMD} update sinks_open=false confirm=none"))
+
+(defwindow control-center [monitor]
+  :monitor monitor
+  :geometry (geometry :x "15px" :y "8px" :width "360px" :anchor "top right")
+  :stacking "overlay"
+  :namespace "eww-control-center"
+  (control-center))
+
+;; ---------------------------------------------------------------------------
+;; Layout
+;; ---------------------------------------------------------------------------
+
+(defwidget control-center []
+  (box :class "cc" :orientation "v" :space-evenly false :spacing 10
+    (box :orientation "h" :space-evenly true :spacing 10
+      (tile :icon {bt.on ? "󰂯" : "󰂲"}
+            :title "Bluetooth"
+            :sub {bt.label}
+            :active {bt.available && bt.on}
+            :onclick "bash $HOME/.config/waybar/eww/scripts/bt-toggle.sh ${bt.on ? 'off' : 'on'}")
+      (tile :icon {mouse.connected ? mouse.text : "󰍽"}
+            :title "Superlight"
+            :sub {mouse.label}
+            :active {mouse.connected && mouse.class == "charging"}
+            :onclick ":"))
+    (sound)
+    (stats)
+    (power)))
+
+;; ---------------------------------------------------------------------------
+;; Building blocks
+;; ---------------------------------------------------------------------------
+
+(defwidget tile [icon title sub active onclick]
+  (eventbox :class "tile-wrap" :cursor "pointer" :timeout "2s" :onclick onclick
+    (box :class "tile" :orientation "h" :space-evenly false :spacing 10
+      (box :class "icon-circle ${active ? 'on' : ''}" :space-evenly true
+        (label :text icon))
+      (box :orientation "v" :valign "center" :halign "start" :space-evenly false
+        (label :class "tile-title" :halign "start" :limit-width 16 :text title)
+        (label :class "tile-sub" :halign "start" :limit-width 18 :text sub)))))
+
+(defwidget slider-row [icon muted value onmute onchange]
+  (box :class "slider-row" :orientation "h" :space-evenly false :spacing 10
+    (eventbox :cursor "pointer" :timeout "1s" :onclick onmute
+      (label :class "slider-icon ${muted ? 'muted' : ''}" :text icon))
+    (scale :class "slider" :hexpand true :min 0 :max 100 :round-digits 0
+           :timeout "1s" :value value :onchange onchange)
+    (label :class "slider-val" :text "${value}%")))
+
+(defwidget ring [value name]
+  (box :class "ring-wrap" :orientation "v" :space-evenly false :spacing 6 :hexpand true
+    (overlay :halign "center"
+      (circular-progress :class "ring ${value > 85 ? 'hot' : ''}"
+                         :value value :thickness 6 :start-at 75 :clockwise true
+                         :width 60 :height 60)
+      (label :class "ring-value" :text "${round(value, 0)}%"))
+    (label :class "ring-name" :text name)))
+
+(defwidget power-btn [icon label onclick]
+  ;; :height is a hard GTK size request (unlike CSS padding, which the box/eventbox
+  ;; layout here wasn't actually growing from -- the row just stayed shrink-wrapped
+  ;; to the icon+label no matter how much padding was added). This is what actually
+  ;; makes the hover rectangle taller.
+  (eventbox :class "power-btn" :cursor "pointer" :timeout "3s" :onclick onclick :height 62
+    (box :orientation "v" :space-evenly false :spacing 4 :valign "center" :halign "center"
+      (label :class "power-icon" :text icon)
+      (label :class "power-label" :text label))))
+
+;; ---------------------------------------------------------------------------
+;; Cards
+;; ---------------------------------------------------------------------------
+
+(defwidget sound []
+  (box :class "card" :orientation "v" :space-evenly false :spacing 10
+    (label :class "card-title" :halign "start" :text "Sound")
+    (slider-row :icon {audio.muted ? "󰝟" : "󰕾"}
+                :muted {audio.muted}
+                :value {audio.vol}
+                :onmute "pactl set-sink-mute @DEFAULT_SINK@ toggle"
+                :onchange "pactl set-sink-volume @DEFAULT_SINK@ {}%")
+    (slider-row :icon {audio.mic_muted ? "󰍭" : "󰍬"}
+                :muted {audio.mic_muted}
+                :value {audio.mic}
+                :onmute "pactl set-source-mute @DEFAULT_SOURCE@ toggle"
+                :onchange "pactl set-source-volume @DEFAULT_SOURCE@ {}%")
+    (eventbox :class "device-row" :cursor "pointer" :timeout "1s"
+              :onclick "${EWW_CMD} update sinks_open=${!sinks_open}"
+      (box :orientation "h" :space-evenly false
+        (label :class "device-current" :hexpand true :halign "start" :limit-width 34
+               :text "Output: ${audio.sink}")
+        (label :class "chevron" :text {sinks_open ? "󰅃" : "󰅀"})))
+    (revealer :transition "slidedown" :duration "200ms" :reveal sinks_open
+      (box :class "device-list" :orientation "v" :space-evenly false
+        (for s in {audio.sinks}
+          (eventbox :class "device ${s.active ? 'active' : ''}" :cursor "pointer" :timeout "1s"
+                    :onclick "pactl set-default-sink '${s.name}'; ${EWW_CMD} update sinks_open=false"
+            (box :orientation "h" :space-evenly false
+              (label :hexpand true :halign "start" :limit-width 34 :text "${s.desc}")
+              (label :text {s.active ? "󰄬" : ""}))))))))
+
+(defwidget stats []
+  (box :class "card" :orientation "h" :space-evenly true
+    (ring :value {EWW_CPU.avg} :name "CPU")
+    (ring :value {EWW_RAM.used_mem_perc} :name "RAM")
+    (ring :value disk :name "Disk")))
+
+(defwidget power []
+  (box :class "card" :orientation "v" :space-evenly false :spacing 6
+    (box :orientation "h" :space-evenly true
+      (power-btn :icon "󰌾" :label "Lock"
+                 :onclick "${EWW_CMD} close control-center cc-closer; pidof hyprlock || setsid -f hyprlock")
+      (power-btn :icon "󰒲" :label "Sleep"
+                 :onclick "${EWW_CMD} close control-center cc-closer; systemctl suspend")
+      (power-btn :icon "󰍃" :label "Log out"
+                 :onclick "${EWW_CMD} update confirm=logout")
+      (power-btn :icon "󰜉" :label "Restart"
+                 :onclick "${EWW_CMD} update confirm=reboot")
+      (power-btn :icon "󰐥" :label "Shut down"
+                 :onclick "${EWW_CMD} update confirm=poweroff"))
+    (revealer :transition "slidedown" :duration "150ms" :reveal {confirm != "none"}
+      (box :class "confirm" :orientation "h" :space-evenly false :spacing 8
+        (label :hexpand true :halign "start"
+               :text {confirm == "reboot" ? "Restart now?" : (confirm == "poweroff" ? "Shut down now?" : "Log out now?")})
+        (eventbox :class "btn" :cursor "pointer" :onclick "${EWW_CMD} update confirm=none"
+          (label :text "Cancel"))
+        (eventbox :class "btn danger" :cursor "pointer" :timeout "3s"
+                  :onclick "${EWW_CMD} update confirm=none sinks_open=false; ${EWW_CMD} close control-center cc-closer; ${confirm == 'reboot' ? 'systemctl reboot' : (confirm == 'poweroff' ? 'systemctl poweroff' : 'hyprctl dispatch exit')}"
+          (label :text "Confirm"))))))

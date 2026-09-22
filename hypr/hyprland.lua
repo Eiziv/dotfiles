@@ -81,6 +81,20 @@ hl.window_rule({
     immediate = true,
 })
 
+-- Dolphin transparency now comes from Kvantum's own translucent_windows
+-- (see kvantum/RiceDark.kvconfig) rather than a forced window opacity here:
+-- Kvantum punches real per-pixel alpha into the background only, so text and
+-- icons stay fully opaque and legible, same mechanism as kitty (which also
+-- has no windowrule here) -- decoration.blur is already global+enabled above
+-- with ignore_opacity defaulting true, so it blurs through automatically.
+-- If Dolphin still looks flat/opaque after applying the Kvantum theme, that
+-- rule can come back as a fallback:
+-- hl.window_rule({
+--     name = "windowrule-4",
+--     match = { class = "^(org.kde.dolphin)$" },
+--     opacity = "0.90 0.80",
+-- })
+
 --windowrulev2 = maxsize 1803 1153,title:^(RuneLite)$
 --windowrulev2 = maxsize 1803 1153,title:^(RuneLite)$
 
@@ -107,6 +121,15 @@ hl.layer_rule({
     name = "layerrule-3",
     match = {
         namespace = "notifications",
+    },
+    ignore_alpha = 0,
+    blur = true,
+})
+
+hl.layer_rule({
+    name = "layerrule-4",
+    match = {
+        namespace = "eww-control-center",
     },
     ignore_alpha = 0,
     blur = true,
@@ -154,6 +177,7 @@ hl.config({
             size = 9,
             passes = 3,
             new_optimizations = true,
+            popups = true, -- blur tooltips/context menus (Kvantum's popup_blurring is on for this)
         },
         shadow = {
             enabled = false,
@@ -194,6 +218,7 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("dunst")
     hl.exec_cmd("walker --gapplication-service")
     hl.exec_cmd("elephant")
+    hl.exec_cmd("eww --config ~/.config/waybar/eww daemon") -- control-center flyout; starts ready so the first click on the Waybar button opens instantly
     hl.exec_cmd("blueman-applet")
     hl.exec_cmd("nm-applet --indicator")
     hl.exec_cmd("dbus-update-activation-environment --systemd --all")

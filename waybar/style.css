@@ -45,7 +45,7 @@ tooltip {
 	margin-top: 2px;
 }
 
-#clock, #tray, #pulseaudio, #cpu, #disk, #memory, #custom-power {
+#clock, #tray, #pulseaudio, #cpu, #disk, #memory, #battery, #custom-mouse, #custom-power, #custom-control-center {
 	padding: 0 7px;
 }
 
@@ -55,4 +55,30 @@ tooltip {
 
 .imsh-cast-monitor.error {
     color: #ff0;
+}
+
+#custom-mouse.charging {
+    color: #99ffdd;
+}
+
+#custom-mouse.warning {
+    color: #ffcc66;
+}
+
+#custom-mouse.critical {
+    color: #ff5555;
+}
+
+/* Control-center button: your logo as a pre-rendered 18px image.
+   GTK stretches SVG backgrounds as pixels (which makes them blurry), so logo-18.png is
+   rendered at exactly 18px, and logo-36.png is used automatically on 2x-scaled monitors. */
+#custom-control-center {
+    min-width: 18px;
+    min-height: 18px;
+    background-image: -gtk-scaled(url("file:///home/vizie/.config/waybar/logo-18.png"),
+                                  url("file:///home/vizie/.config/waybar/logo-36.png"));
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 18px 18px;
+    margin-right: 6px; /* gap between the logo and the end of the bar */
 }

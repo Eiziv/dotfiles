@@ -2,13 +2,13 @@
   {
     "battery": {
       "bat": "BAT0",
-      "format": "{icon} {capacity}%",
+      "format": "<span size='12288'>{icon}</span>  <span rise='1536'>{capacity}%</span>",
       "format-icons": [
-        "",
-        "",
-        "",
-        "",
-        ""
+        "󰁺",
+        "󰁼",
+        "󰁾",
+        "󰂀",
+        "󰁹"
       ],
       "interval": 1,
       "states": {
@@ -43,33 +43,45 @@
                     }
     },
     "custom/power": {
-      "format": "  ",
+      "format": "<span size='12288'>󰐥</span>",
       "on-click": "bash $HOME/.config/waybar/scripts/poweroff.sh"
     },
+    "custom/mouse": {
+      "exec": "bash $HOME/.config/waybar/scripts/mouse-battery.sh",
+      "return-type": "json",
+      "format": "<span size='12288'>{text}</span>",
+      "interval": 30,
+      "hide-empty-text": true
+    },
+    "custom/control-center": {
+      "format": " ",
+      "tooltip": false,
+      "on-click": "bash $HOME/.config/waybar/eww/scripts/toggle.sh"
+    },
     "tray": {
-      "icon-size": 17,
+      "icon-size": 16,
       "spacing": 10
     },
     "pulseaudio#sink": {
       "scroll-step": 5,
-      "format": "{icon}  {volume}%",
-      "format-muted": "  {format_source}",
+      "format": "<span size='12288'>{icon}</span>  <span rise='1536'>{volume}%</span>",
+      "format-muted": "<span size='12288'>󰝟</span>  {format_source}",
       "format-icons": {
         "default": [
-          "",
-          "",
-          ""
+          "󰕿",
+          "󰖀",
+          "󰕾"
         ]
       }
     },
     "pulseaudio#source": {
       "scroll-step": 5,
       "format": "{format_source}",
-      "format-source": " {volume}%",
-      "format-source-muted": ""
+      "format-source": "<span size='12288'>󰍬</span>  <span rise='1536'>{volume}%</span>",
+      "format-source-muted": "<span size='12288'>󰍭</span>"
     },
     "cpu": {
-      "format": "󰍛  {usage}%",
+      "format": "<span size='12288'>󰻠</span>  <span rise='1536'>{usage}%</span>",
       "interval": 1
     },
     "custom/imsh-cast-monitor": {
@@ -79,7 +91,7 @@
       "hide-empty-text": true
     },
     "disk": {
-      "format": "󰆓  {percentage_used}%",
+      "format": "<span size='12288'>󰆓</span>  <span rise='1536'>{percentage_used}%</span>",
       "interval": 1,
       "path": "/"
     },
@@ -91,7 +103,7 @@
     },
     "layer": "top",
     "memory": {
-      "format": "   {percentage}%",
+      "format": "<span size='12288'>󰍛</span>  <span rise='1536'>{percentage}%</span>",
       "interval": 1
     },
     "modules-center": [
@@ -105,12 +117,7 @@
     "modules-right": [
       "tray",
       "battery",
-      "pulseaudio#sink",
-      "pulseaudio#source",
-      "cpu",
-      "memory",
-      "disk",
-      "custom/power"
+      "custom/control-center"
     ],
     "position": "top",
     "margin-left": 15,

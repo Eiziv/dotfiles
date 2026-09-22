@@ -1,0 +1,217 @@
+// Control center styling. Monochrome to match the transparent Waybar.
+
+$fg: #ffffff;
+$dim: rgba(255, 255, 255, 0.55);
+// Black-based translucency (not white-tinted) to match the rest of the rice
+// (Waybar's #waybar, walker, dunst all use rgba(0, 0, 0, ...) over the
+// compositor blur, rather than a lightened panel color).
+$card: rgba(0, 0, 0, 0.16);
+$card-hover: rgba(0, 0, 0, 0.26);
+$track: rgba(255, 255, 255, 0.14);
+$ink: #18181c;
+$danger: #ff6b6b;
+
+* {
+  all: unset;
+  font-family: "NotoSans Nerd Font Regular", "NotoSans Nerd Font", "Noto Sans", sans-serif;
+  font-size: 13px;
+  color: $fg;
+}
+
+// ---- panel -----------------------------------------------------------------
+
+.cc {
+  // Same near-transparent black as #waybar / walker's .box-wrapper; the
+  // compositor's own blur (layerrule-4 in hyprland.lua) does the rest, no
+  // border, same as the rest of the rice.
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  padding: 14px;
+}
+
+.card {
+  background-color: $card;
+  border-radius: 18px;
+  padding: 12px 14px;
+}
+
+.card-title {
+  font-weight: bold;
+}
+
+// ---- tiles (Bluetooth / mouse) ------------------------------------------------
+
+.tile {
+  background-color: $card;
+  border-radius: 18px;
+  padding: 10px 12px;
+}
+
+.tile-wrap:hover .tile {
+  background-color: $card-hover;
+}
+
+.icon-circle {
+  min-width: 38px;
+  min-height: 38px;
+  border-radius: 19px;
+  background-color: $track;
+
+  label {
+    font-size: 18px;
+  }
+
+  &.on {
+    background-color: $fg;
+
+    label {
+      color: $ink;
+    }
+  }
+}
+
+.tile-title {
+  font-weight: bold;
+}
+
+.tile-sub {
+  font-size: 11px;
+  color: $dim;
+}
+
+// ---- sliders ------------------------------------------------------------------
+
+.slider-icon {
+  font-size: 17px;
+  min-width: 24px;
+
+  &.muted {
+    color: $dim;
+  }
+}
+
+.slider-val {
+  font-size: 11px;
+  color: $dim;
+  min-width: 34px;
+}
+
+scale trough {
+  min-height: 24px;
+  border-radius: 12px;
+  background-color: $track;
+}
+
+scale highlight {
+  border-radius: 12px;
+  background-color: $fg;
+}
+
+scale slider {
+  min-width: 0;
+  min-height: 24px;
+  background-color: transparent;
+}
+
+// ---- output device switcher ------------------------------------------------------
+
+.device-row {
+  padding: 4px 6px 0 6px;
+  margin: 0 -6px;
+  border-radius: 10px;
+
+  &:hover {
+    background-color: $card-hover;
+  }
+}
+
+.device-current,
+.chevron {
+  font-size: 12px;
+  color: $dim;
+}
+
+.device-list {
+  margin-top: 4px;
+}
+
+.device {
+  padding: 6px 8px;
+  border-radius: 10px;
+
+  &:hover {
+    background-color: $card-hover;
+  }
+
+  &.active {
+    font-weight: bold;
+  }
+}
+
+// ---- system rings -----------------------------------------------------------------
+
+.ring {
+  color: $fg;
+  background-color: $track;
+
+  &.hot {
+    color: $danger;
+  }
+}
+
+.ring-value {
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.ring-name {
+  font-size: 11px;
+  color: $dim;
+}
+
+// ---- power ------------------------------------------------------------------------
+
+.power-btn {
+  padding: 8px 10px;
+  border-radius: 14px;
+
+  &:hover {
+    background-color: $card-hover;
+  }
+}
+
+.power-icon {
+  font-size: 20px;
+}
+
+.power-label {
+  font-size: 10px;
+  color: $dim;
+}
+
+.confirm {
+  margin-top: 4px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background-color: rgba(0, 0, 0, 0.16);
+}
+
+.btn {
+  padding: 4px 12px;
+  border-radius: 10px;
+  background-color: $card-hover;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.14);
+  }
+
+  &.danger {
+    background-color: $danger;
+    color: $ink;
+    font-weight: bold;
+
+    &:hover {
+      background-color: #ff8787;
+    }
+  }
+}
