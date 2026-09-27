@@ -21,6 +21,7 @@ fi
 # Login screen (greetd). The greeter runs as its own user and can't read
 # ~/git, so these are copied rather than symlinked; rerun after changing them.
 sudo install -m644 greetd/config.toml greetd/hyprland.lua greetd/hyprpaper.conf greetd/style.css /etc/greetd/
+sudo install -m755 greetd/session.sh /etc/greetd/session.sh
 sudo install -Dm644 hypr/wallpaper.jpg /etc/greetd/wallpapers/wallpaper.jpg
 sudo install -m644 greetd/99_greeter-cursor.gschema.override /usr/share/glib-2.0/schemas/
 sudo glib-compile-schemas /usr/share/glib-2.0/schemas

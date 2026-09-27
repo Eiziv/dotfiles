@@ -86,6 +86,6 @@ hl.on("hyprland.start", function()
     -- hyprpaper (it segfaults if the compositor disappears under it), then quit
     -- this Hyprland cleanly so greetd starts the session right away. Without this
     -- the greeter got killed and Hyprland/hyprpaper/portals crashed on the way out.
-    hl.exec_cmd("gtkgreet -l -c 'uwsm start hyprland-uwsm.desktop' -s /etc/greetd/style.css; sleep 0.35; pkill -xf 'hyprpaper -c /etc/greetd/hyprpaper.conf'; sleep 0.1; hyprctl dispatch 'hl.dsp.exit()'")
+    hl.exec_cmd("gtkgreet -l -c /etc/greetd/session.sh -s /etc/greetd/style.css; sleep 0.35; pkill -xf 'hyprpaper -c /etc/greetd/hyprpaper.conf'; sleep 0.1; hyprctl dispatch 'hl.dsp.exit()'")
     hl.exec_cmd("kitty")
 end)
