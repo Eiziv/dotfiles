@@ -1,14 +1,44 @@
-window, button, entry {
-    background: rgba(0,0,0,0.2);
-    border: none;
-    box-shadow: none;
-    text-shadow: none;
-}
-
-label, window, button, entry {
+/* greetd login screen (gtkgreet -l), styled like hypr/hyprlock.conf in the dotfiles:
+   full-screen layer, Hyprland blurs the wallpaper behind it (layer rule in
+   hyprland.lua), translucent black boxes, #eee text, rounding 10. */
+* {
+    font-family: "NotoSans Nerd Font", "Noto Sans", sans-serif;
     color: #eee;
+    text-shadow: none;
+    box-shadow: none;
 }
 
-#command-selector arrow {
+window {
+    background-color: rgba(0, 0, 0, 0.25);
+}
+
+#clock {
+    font-weight: 300;
+    margin-bottom: 40px;
+}
+
+/* The "Username:" / "Password:" prompt sits left of the box and can't be
+   moved above it, so hide it; the red "Login failed" label is not a first
+   child and stays visible. */
+#body box > label:first-child {
+    color: transparent;
+    font-size: 1px;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+}
+
+#input-field {
+    background: rgba(0, 0, 0, 0.2);
+    border: none;
+    border-radius: 10px;
+    min-height: 50px;
+    padding: 0 16px;
+    font-size: 15px;
+    caret-color: #eee;
+}
+
+/* Session command and buttons: Enter logs in, like the lock screen. */
+#command-selector, button {
     opacity: 0;
 }

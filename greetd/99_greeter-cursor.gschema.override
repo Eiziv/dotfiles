@@ -1,0 +1,6 @@
+# Default cursor for users without their own GNOME setting (i.e. the greetd
+# greeter), so gtkgreet uses the same cursor as the desktop session.
+# Install: sudo install -m644 this file /usr/share/glib-2.0/schemas/ && sudo glib-compile-schemas /usr/share/glib-2.0/schemas
+[org.gnome.desktop.interface]
+cursor-theme='BreezeX-Black'
+cursor-size=28

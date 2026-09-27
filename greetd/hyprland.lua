@@ -1,8 +1,11 @@
-hl.window_rule({
+-- gtkgreet runs as a full-screen layer (-l); blur the wallpaper behind it so the
+-- login screen looks like hyprlock (blur 5/2 + dim from style.css).
+hl.layer_rule({
     match = {
-        class = "gtkgreet",
+        namespace = "gtk-layer-shell",
     },
-    float = true,
+    blur = true,
+    ignore_alpha = 0,
 })
 
 hl.monitor({
@@ -17,6 +20,13 @@ hl.monitor({
     output = "DP-1",
     disabled = true,
 })
+
+-- Same cursor as the desktop session. The greeter user has no settings of its
+-- own, so without this Hyprland falls back to the default (Adwaita) cursor.
+-- gtkgreet's own window reads GNOME's cursor setting instead; that default comes
+-- from greetd/99_greeter-cursor.gschema.override in /usr/share/glib-2.0/schemas.
+hl.env("XCURSOR_THEME", "BreezeX-Black")
+hl.env("XCURSOR_SIZE", "28")
 
 hl.config({
     misc = {
@@ -37,8 +47,8 @@ hl.config({
         rounding = 10,
         blur = {
             enabled = true,
-            size = 9,
-            passes = 3,
+            size = 5,
+            passes = 2,
             new_optimizations = true,
         },
         shadow = {
@@ -60,7 +70,7 @@ hl.config({
 })
 
 hl.on("hyprland.start", function()
-    hl.exec_cmd("gtkgreet -c start-hyprland -s /etc/greetd/style.css; hyprctl dispatch exit")
+    hl.exec_cmd("gtkgreet -l -c 'uwsm start hyprland-uwsm.desktop; hyprctl dispatch exit' -s /etc/greetd/style.css")
     hl.exec_cmd("hyprpaper -c /etc/greetd/hyprpaper.conf")
     hl.exec_cmd("kitty")
 end)
