@@ -223,6 +223,7 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("nm-applet --indicator")
     hl.exec_cmd("dbus-update-activation-environment --systemd --all")
     hl.exec_cmd("xembedsniproxy")
+    hl.exec_cmd("~/.config/hypr/scripts/xwl-clipbridge") -- forward X11 clipboard (Wine/Proton games) to Wayland regardless of focus
     hl.exec_cmd("systemctl --user start hyprpolkitagent")
    -- hl.exec_cmd("gsettings set org.gnome.desktop.interface color-scheme prefer-dark")
    -- hl.exec_cmd("gsettings set org.gnome.desktop.interface gtk-theme Adwaita-dark")

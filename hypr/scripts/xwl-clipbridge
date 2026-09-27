@@ -1,0 +1,111 @@
+#!/usr/bin/env python3
+"""Bridge the X11 CLIPBOARD to the Wayland clipboard.
+
+Hyprland only forwards XWayland clipboard changes while an X11 window has
+keyboard focus. Wine/Proton sets the clipboard asynchronously from a hidden
+window, so copies from games often never reach Wayland. This watches CLIPBOARD
+ownership via XFixes and pushes any new text to wl-copy.
+"""
+import os
+import subprocess
+import sys
+import time
+
+from Xlib import X, Xatom, display
+from Xlib.ext import xfixes
+
+TIMEOUT = 2.0
+
+
+def read_selection(d, win, sel, target, prop):
+    win.convert_selection(sel, target, prop, X.CurrentTime)
+    d.flush()
+    deadline = time.monotonic() + TIMEOUT
+    while time.monotonic() < deadline:
+        while d.pending_events():
+            e = d.next_event()
+            if e.type != X.SelectionNotify:
+                continue
+            if e.property == X.NONE:
+                return None
+            p = win.get_full_property(prop, X.AnyPropertyType, sizehint=1 << 20)
+            win.delete_property(prop)
+            if p is None:
+                return None
+            if p.property_type == d.intern_atom("INCR"):
+                return read_incr(d, win, prop)
+            return bytes(p.value)
+        time.sleep(0.01)
+    return None
+
+
+def read_incr(d, win, prop):
+    chunks = []
+    d.flush()
+    deadline = time.monotonic() + TIMEOUT * 5
+    while time.monotonic() < deadline:
+        while d.pending_events():
+            e = d.next_event()
+            if e.type == X.PropertyNotify and e.atom == prop and e.state == X.PropertyNewValue:
+                p = win.get_full_property(prop, X.AnyPropertyType, sizehint=1 << 20)
+                win.delete_property(prop)
+                d.flush()
+                if p is None or not p.value:
+                    return b"".join(chunks)
+                chunks.append(bytes(p.value))
+        time.sleep(0.005)
+    return None
+
+
+def wayland_text():
+    try:
+        r = subprocess.run(["wl-paste", "-n", "-t", "text"], capture_output=True, timeout=TIMEOUT)
+        return r.stdout if r.returncode == 0 else None
+    except subprocess.TimeoutExpired:
+        return None
+
+
+def main():
+    # Xwayland may not be up yet when launched from the compositor's autostart.
+    for _ in range(60):
+        try:
+            d = display.Display(os.environ.get("DISPLAY", ":0"))
+            break
+        except Exception:
+            time.sleep(1)
+    else:
+        sys.exit("xwl-clipbridge: could not connect to X display")
+    root = d.screen().root
+    win = root.create_window(0, 0, 1, 1, 0, d.screen().root_depth,
+                             event_mask=X.PropertyChangeMask)
+    clip = d.intern_atom("CLIPBOARD")
+    utf8 = d.intern_atom("UTF8_STRING")
+    prop = d.intern_atom("XWL_CLIPBRIDGE")
+    d.xfixes_query_version()
+    d.xfixes_select_selection_input(root, clip, xfixes.XFixesSetSelectionOwnerNotifyMask)
+    d.flush()
+    owner_notify = d.extension_event.SetSelectionOwnerNotify  # (type, subcode)
+    print("xwl-clipbridge: watching X11 CLIPBOARD", file=sys.stderr, flush=True)
+
+    while True:
+        e = d.next_event()
+        if (e.type, getattr(e, "sub_code", None)) != owner_notify:
+            continue
+        if e.owner in (X.NONE, win.id):
+            continue
+        # Let the owner settle and give Hyprland's own bridge a chance first.
+        time.sleep(0.15)
+        text = read_selection(d, win, clip, utf8, prop)
+        if text is None:
+            text = read_selection(d, win, clip, Xatom.STRING, prop)
+        if not text:
+            continue
+        # Skip if Wayland already has it (Hyprland bridged it, or it came from Wayland).
+        if wayland_text() == text:
+            continue
+        subprocess.run(["wl-copy", "--type", "text/plain;charset=utf-8"], input=text)
+        print(f"xwl-clipbridge: forwarded {len(text)} bytes", file=sys.stderr, flush=True)
+
+
+if __name__ == "__main__":
+    main()
