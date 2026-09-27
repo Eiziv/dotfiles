@@ -32,6 +32,9 @@ hl.config({
     misc = {
         disable_hyprland_logo = true,
         disable_splash_rendering = true,
+        -- Wallpaper's average colour (dimmed like style.css) instead of black,
+        -- shown for the moment before hyprpaper has drawn the wallpaper.
+        background_color = "rgb(0d1513)",
     },
     general = {
         border_size = 2,
@@ -69,8 +72,20 @@ hl.config({
     },
 })
 
+-- Login screen fades in over the wallpaper and out again when you log in.
+hl.curve("easeOutQuint", { type = "bezier", points = { {0.23, 1}, {0.32, 1} } })
+hl.curve("almostLinear", { type = "bezier", points = { {0.5, 0.5}, {0.75, 1} } })
+hl.animation({ leaf = "layersIn",      enabled = true, speed = 5, bezier = "easeOutQuint", style = "fade" })
+hl.animation({ leaf = "fadeLayersIn",  enabled = true, speed = 5, bezier = "almostLinear" })
+hl.animation({ leaf = "layersOut",     enabled = true, speed = 3, bezier = "almostLinear", style = "fade" })
+hl.animation({ leaf = "fadeLayersOut", enabled = true, speed = 3, bezier = "almostLinear" })
+
 hl.on("hyprland.start", function()
-    hl.exec_cmd("gtkgreet -l -c 'uwsm start hyprland-uwsm.desktop; hyprctl dispatch exit' -s /etc/greetd/style.css")
     hl.exec_cmd("hyprpaper -c /etc/greetd/hyprpaper.conf")
+    -- gtkgreet exits once the login succeeds: let its fade-out finish, stop
+    -- hyprpaper (it segfaults if the compositor disappears under it), then quit
+    -- this Hyprland cleanly so greetd starts the session right away. Without this
+    -- the greeter got killed and Hyprland/hyprpaper/portals crashed on the way out.
+    hl.exec_cmd("gtkgreet -l -c 'uwsm start hyprland-uwsm.desktop' -s /etc/greetd/style.css; sleep 0.35; pkill -xf 'hyprpaper -c /etc/greetd/hyprpaper.conf'; sleep 0.1; hyprctl dispatch 'hl.dsp.exit()'")
     hl.exec_cmd("kitty")
 end)

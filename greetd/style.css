@@ -28,7 +28,23 @@ window {
     padding: 0;
 }
 
+/* Content fades in just after Hyprland's layer fade (see hyprland.lua). */
+@keyframes greet-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+#body {
+    animation: greet-in 500ms ease-out 150ms backwards;
+}
+
+/* "Login failed" */
+#body box > label:last-child:not(#clock) {
+    animation: greet-in 250ms ease-out;
+}
+
 #input-field {
+    transition: background-color 200ms ease-out;
     background: rgba(0, 0, 0, 0.2);
     border: none;
     border-radius: 10px;
@@ -36,6 +52,10 @@ window {
     padding: 0 16px;
     font-size: 15px;
     caret-color: #eee;
+}
+
+#input-field:focus {
+    background: rgba(0, 0, 0, 0.28);
 }
 
 /* Session command and buttons: Enter logs in, like the lock screen. */

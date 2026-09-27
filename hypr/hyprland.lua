@@ -198,6 +198,9 @@ hl.config({
     misc = {
         disable_hyprland_logo = true,
         disable_splash_rendering = true,
+        -- Wallpaper's average colour instead of black, so the moment between the
+        -- login screen and hyprpaper drawing the wallpaper doesn't flash black.
+        background_color = "rgb(121d1a)",
     },
     ecosystem = {
         no_donation_nag = true,
