@@ -45,7 +45,7 @@ tooltip {
 	margin-top: 2px;
 }
 
-#clock, #tray, #pulseaudio, #cpu, #disk, #memory, #battery, #custom-mouse, #custom-power, #custom-control-center {
+#clock, #tray, #pulseaudio, #cpu, #disk, #memory, #custom-mouse, #custom-power, #custom-control-center {
 	padding: 0 7px;
 }
 

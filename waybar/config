@@ -1,22 +1,5 @@
 [
   {
-    "battery": {
-      "bat": "BAT0",
-      "format": "<span size='12288'>{icon}</span>  <span rise='1536'>{capacity}%</span>",
-      "format-icons": [
-        "󰁺",
-        "󰁼",
-        "󰁾",
-        "󰂀",
-        "󰁹"
-      ],
-      "interval": 1,
-      "states": {
-        "critical": 10,
-        "warning": 20
-      },
-      "tooltip-format": "{timeTo}"
-    },
     "clock": {
         "format": "{:%H:%M}",
         "format-alt": "{:%A, %B %d, %Y (%R)}",
@@ -116,7 +99,6 @@
     ],
     "modules-right": [
       "tray",
-      "battery",
       "custom/control-center"
     ],
     "position": "top",
