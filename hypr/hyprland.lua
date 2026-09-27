@@ -208,7 +208,16 @@ hl.config({
     --ENVIROMENT#
     --CURSOR#
     cursor = {
-        no_hardware_cursors = true,
+        -- Hardware cursor: a software cursor forces Hyprland to composite every
+        -- frame, which blocks direct scanout (and with it tearing) for games.
+        -- Set back to true if the cursor flickers or disappears on NVIDIA.
+        no_hardware_cursors = false,
+    },
+    render = {
+        -- Fullscreen games (e.g. WoW) scan out straight to the monitor instead of
+        -- being copied by the compositor: lower latency, lets tearing work.
+        -- 1 = always; XWayland games don't set a content type, so 2 (auto) won't trigger.
+        direct_scanout = 1,
     },
 })
 
