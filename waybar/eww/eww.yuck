@@ -165,8 +165,12 @@
       (box :class "confirm" :orientation "h" :space-evenly false :spacing 8
         (label :hexpand true :halign "start"
                :text {confirm == "reboot" ? "Restart now?" : (confirm == "poweroff" ? "Shut down now?" : "Log out now?")})
-        (eventbox :class "btn" :cursor "pointer" :onclick "${EWW_CMD} update confirm=none"
-          (label :text "Cancel"))
-        (eventbox :class "btn danger" :cursor "pointer" :timeout "3s"
+        ;; Padding/background live on the inner box: GTK ignores CSS padding on an
+        ;; eventbox, so styling the eventbox itself left the pills shrink-wrapped.
+        (eventbox :class "btn-wrap" :cursor "pointer" :onclick "${EWW_CMD} update confirm=none"
+          (box :class "btn"
+            (label :text "Cancel")))
+        (eventbox :class "btn-wrap" :cursor "pointer" :timeout "3s"
                   :onclick "${EWW_CMD} update confirm=none sinks_open=false; ${EWW_CMD} close control-center cc-closer; ${confirm == 'reboot' ? 'systemctl reboot' : (confirm == 'poweroff' ? 'systemctl poweroff' : 'hyprctl dispatch exit')}"
-          (label :text "Confirm"))))))
+          (box :class "btn danger"
+            (label :text "Confirm")))))))

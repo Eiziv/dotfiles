@@ -196,22 +196,29 @@ scale slider {
   background-color: rgba(0, 0, 0, 0.16);
 }
 
+// .btn-wrap is the eventbox (hover/click); .btn is the inner box that is
+// actually drawn, since GTK ignores padding on an eventbox.
 .btn {
-  padding: 4px 12px;
+  padding: 5px 14px;
   border-radius: 10px;
   background-color: $card-hover;
 
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.14);
-  }
-
   &.danger {
     background-color: $danger;
-    color: $ink;
-    font-weight: bold;
 
-    &:hover {
-      background-color: #ff8787;
+    // `*` sets color on every label directly, so it has to be overridden on
+    // the label rather than inherited from the box.
+    label {
+      color: $ink;
+      font-weight: bold;
     }
+  }
+}
+
+.btn-wrap:hover .btn {
+  background-color: rgba(255, 255, 255, 0.14);
+
+  &.danger {
+    background-color: #ff8787;
   }
 }
