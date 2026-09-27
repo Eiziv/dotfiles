@@ -1,5 +1,9 @@
 Applications            | Why
 
 nwg-look                | Application to choose theme (Important for Hyprcursors to work)
-geetd + greetd-gtkgreet | Login
+greetd + greetd-gtkgreet | Login
 go-yq                   | Needed for symlink.sh
+hyprlock                | Lock screen (control center Lock button, lock on idle/sleep)
+hypridle                | Screen off and lock when idle
+libva-nvidia-driver     | Firefox hardware video decoding on NVIDIA
+python-xlib wl-clipboard | xwl-clipbridge: copy text from Wine/Proton games (WoW) to the desktop
