@@ -46,6 +46,7 @@
       "icons": {
         "Signal_status_icon_1": "/home/vizie/.config/waybar/icons/signal.svg",
         "bitwarden": "/home/vizie/.config/waybar/icons/bitwarden.svg",
+        "wowup": "/home/vizie/.config/waybar/icons/wowup.svg",
         "Claude_status_icon_1": "/home/vizie/.config/waybar/icons/claude.svg",
         "steam_app_default": "/home/vizie/.config/waybar/icons/battlenet.svg",
         "faugus-launcher": "/home/vizie/.config/waybar/icons/faugus.svg",

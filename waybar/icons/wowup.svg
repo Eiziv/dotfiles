@@ -1,0 +1,5 @@
+<!-- wowup: hand-drawn after WowUp's logo (a W whose last stroke is an up arrow) for the Waybar tray -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32">
+  <path d="M2.4 8 L6.7 19.5 L10.9 9.5 L15.1 19.5 L19.2 8.5" fill="none" stroke="#ffffff" stroke-width="3.4" stroke-linejoin="miter" stroke-miterlimit="3"/>
+  <path d="M14.8 9.2 L19.2 2.8 L23.6 9.2 Z" fill="#ffffff"/>
+</svg>
