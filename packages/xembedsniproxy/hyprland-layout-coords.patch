@@ -1,6 +1,6 @@
 diff --color -ruN a/xembed-sni-proxy/sniproxy.cpp b/xembed-sni-proxy/sniproxy.cpp
---- a/xembed-sni-proxy/sniproxy.cpp	2026-10-04 00:47:38.479447684 +0200
-+++ b/xembed-sni-proxy/sniproxy.cpp	2026-10-04 00:47:38.491004736 +0200
+--- a/xembed-sni-proxy/sniproxy.cpp	2026-10-04 00:53:25.516456922 +0200
++++ b/xembed-sni-proxy/sniproxy.cpp	2026-10-04 00:53:25.529230701 +0200
 @@ -15,6 +15,11 @@
  #include <xcb/xcb_icccm.h>
  
@@ -13,29 +13,72 @@ diff --color -ruN a/xembed-sni-proxy/sniproxy.cpp b/xembed-sni-proxy/sniproxy.cp
  #include <QScreen>
  #include <QTimer>
  
-@@ -590,8 +595,58 @@
+@@ -590,8 +595,102 @@
      }
  }
  
++static QJsonDocument hyprctlJson(const QString &command)
++{
++    QProcess hyprctl;
++    hyprctl.start(QStringLiteral("hyprctl"), {QStringLiteral("-j"), command});
++    if (!hyprctl.waitForFinished(1000) || hyprctl.exitStatus() != QProcess::NormalExit || hyprctl.exitCode() != 0) {
++        qCWarning(SNIPROXY) << "Could not query hyprctl for" << command;
++        return {};
++    }
++    return QJsonDocument::fromJson(hyprctl.readAllStandardOutput());
++}
++
++// A click on a tray icon lies inside the panel showing the tray, and clients open
++// their menu at the click position, so partly over or under that panel. Move the
++// point just outside the panel instead, on the side facing the middle of the monitor.
++static QPoint movedOutOfPanel(const QPoint &point, const QRectF &monitor)
++{
++    static const int gap = 6;
++
++    const QJsonObject outputs = hyprctlJson(QStringLiteral("layers")).object();
++    for (const QJsonValue &output : outputs) {
++        const QJsonObject levels = output.toObject()[QLatin1String("levels")].toObject();
++        for (const QString &level : {QStringLiteral("2"), QStringLiteral("3")}) { // top and overlay layers
++            const QJsonArray layers = levels[level].toArray();
++            for (const QJsonValue &value : layers) {
++                const QJsonObject layer = value.toObject();
++                const QRect panel(layer[QLatin1String("x")].toInt(),
++                                  layer[QLatin1String("y")].toInt(),
++                                  layer[QLatin1String("w")].toInt(),
++                                  layer[QLatin1String("h")].toInt());
++                if (!panel.contains(point)) {
++                    continue;
++                }
++                if (panel.width() >= panel.height()) { // horizontal panel
++                    if (panel.height() * 2 >= monitor.height()) {
++                        continue; // covers most of the monitor, not a panel
++                    }
++                    const bool atTop = panel.center().y() < monitor.center().y();
++                    return QPoint(point.x(), atTop ? panel.y() + panel.height() + gap : panel.y() - gap);
++                }
++                if (panel.width() * 2 >= monitor.width()) {
++                    continue;
++                }
++                const bool atLeft = panel.center().x() < monitor.center().x();
++                return QPoint(atLeft ? panel.x() + panel.width() + gap : panel.x() - gap, point.y());
++            }
++        }
++    }
++    return point;
++}
++
 +// The tray host passes the click position in the compositor's global layout
 +// coordinates. Hyprland arranges its outputs differently for Xwayland (packed left to
 +// right from 0,0, as X11 has no negative coordinates), so map the point to X11 root
 +// coordinates through the output it lies on. Without this the client's menu opens
 +// offset by the difference between the two layouts.
-+static QPoint mapFromHyprlandLayout(const QPoint &point)
++static QPoint mapFromHyprlandLayout(QPoint point)
 +{
 +    if (qEnvironmentVariableIsEmpty("HYPRLAND_INSTANCE_SIGNATURE")) {
 +        return point;
 +    }
 +
-+    QProcess hyprctl;
-+    hyprctl.start(QStringLiteral("hyprctl"), {QStringLiteral("-j"), QStringLiteral("monitors")});
-+    if (!hyprctl.waitForFinished(1000) || hyprctl.exitStatus() != QProcess::NormalExit || hyprctl.exitCode() != 0) {
-+        qCWarning(SNIPROXY) << "Could not query hyprctl for the monitor layout";
-+        return point;
-+    }
-+
-+    const QJsonArray monitors = QJsonDocument::fromJson(hyprctl.readAllStandardOutput()).array();
++    const QJsonArray monitors = hyprctlJson(QStringLiteral("monitors")).array();
 +    for (const QJsonValue &value : monitors) {
 +        const QJsonObject monitor = value.toObject();
 +        const qreal scale = monitor[QLatin1String("scale")].toDouble(1);
@@ -47,6 +90,7 @@ diff --color -ruN a/xembed-sni-proxy/sniproxy.cpp b/xembed-sni-proxy/sniproxy.cp
 +        if (size.isEmpty() || !layout.contains(point)) {
 +            continue;
 +        }
++        point = movedOutOfPanel(point, layout);
 +
 +        const auto screens = QGuiApplication::screens();
 +        for (const QScreen *screen : screens) {
