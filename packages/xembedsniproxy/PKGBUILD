@@ -1,0 +1,59 @@
+# Local standalone build of KDE's xembedsniproxy, which Arch only ships inside
+# plasma-workspace (and so drags in most of Plasma). It bridges legacy XEmbed tray
+# icons (Wine/Proton apps such as Battle.net) to StatusNotifierItem so they show up
+# in Waybar's tray instead of as a stray floating window.
+#
+# Builds just the xembed-sni-proxy directory of the official plasma-workspace
+# tarball using our own CMakeLists.txt. Build and install with:
+#   makepkg -si
+
+pkgname=xembedsniproxy
+pkgver=6.7.5
+pkgrel=1
+pkgdesc='Show legacy XEmbed tray icons in StatusNotifierItem trays (standalone build from plasma-workspace)'
+arch=('x86_64')
+url='https://invent.kde.org/plasma/plasma-workspace/-/tree/master/xembed-sni-proxy'
+license=('LGPL-2.1-or-later')
+depends=(
+    'gcc-libs'
+    'glibc'
+    'kcoreaddons'
+    'kcrash'
+    'kdbusaddons'
+    'kwindowsystem'
+    'libx11'
+    'libxcb'
+    'libxtst'
+    'qt6-base'
+    'xcb-util'
+    'xcb-util-image'
+    'xcb-util-wm'
+)
+makedepends=(
+    'cmake'
+    'xorgproto'
+)
+conflicts=('plasma-workspace')
+source=("https://download.kde.org/stable/plasma/$pkgver/plasma-workspace-$pkgver.tar.xz"
+        'CMakeLists.txt')
+# Tarball checksum matches Arch's plasma-workspace package.
+sha256sums=('94ab21e2243b7876f65c315f1e545081c6437f5bd0a041ca4fb6c2533ae874c9'
+            'f6dbdaabd76a623139a34e3d48717b37da7dd9d8f2f159ea8e06d7ff8577547c')
+
+prepare() {
+    cp CMakeLists.txt "plasma-workspace-$pkgver/xembed-sni-proxy/CMakeLists.txt"
+}
+
+build() {
+    cmake -B build -S "plasma-workspace-$pkgver/xembed-sni-proxy" \
+        -DCMAKE_BUILD_TYPE=None \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DWORKSPACE_VERSION="$pkgver"
+    cmake --build build
+}
+
+package() {
+    DESTDIR="$pkgdir" cmake --install build
+    install -Dm644 "plasma-workspace-$pkgver/LICENSES/LGPL-2.1-or-later.txt" \
+        -t "$pkgdir/usr/share/licenses/$pkgname/"
+}

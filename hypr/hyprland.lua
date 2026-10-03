@@ -81,6 +81,23 @@ hl.window_rule({
     immediate = true,
 })
 
+-- xembedsniproxy (packages/xembedsniproxy) puts Wine/Proton tray icons such as
+-- Battle.net into Waybar's tray. It keeps a small helper window mapped for the
+-- icons it hosts, which Hyprland would otherwise show as a floating window.
+hl.window_rule({
+    name = "xembedsniproxy",
+    match = {
+        class = "^xembedsniproxy$",
+    },
+    opacity = "0.0 override 0.0 override",
+    border_size = 0,
+    no_blur = true,
+    no_shadow = true,
+    no_anim = true,
+    no_focus = true,
+    no_initial_focus = true,
+})
+
 -- Dolphin transparency now comes from Kvantum's own translucent_windows
 -- (see kvantum/RiceDark.kvconfig) rather than a forced window opacity here:
 -- Kvantum punches real per-pixel alpha into the background only, so text and
