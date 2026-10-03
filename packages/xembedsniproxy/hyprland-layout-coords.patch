@@ -1,0 +1,74 @@
+diff --color -ruN a/xembed-sni-proxy/sniproxy.cpp b/xembed-sni-proxy/sniproxy.cpp
+--- a/xembed-sni-proxy/sniproxy.cpp	2026-10-04 00:47:38.479447684 +0200
++++ b/xembed-sni-proxy/sniproxy.cpp	2026-10-04 00:47:38.491004736 +0200
+@@ -15,6 +15,11 @@
+ #include <xcb/xcb_icccm.h>
+ 
+ #include <QDBusPendingCallWatcher>
++#include <QGuiApplication>
++#include <QJsonArray>
++#include <QJsonDocument>
++#include <QJsonObject>
++#include <QProcess>
+ #include <QScreen>
+ #include <QTimer>
+ 
+@@ -590,8 +595,58 @@
+     }
+ }
+ 
++// The tray host passes the click position in the compositor's global layout
++// coordinates. Hyprland arranges its outputs differently for Xwayland (packed left to
++// right from 0,0, as X11 has no negative coordinates), so map the point to X11 root
++// coordinates through the output it lies on. Without this the client's menu opens
++// offset by the difference between the two layouts.
++static QPoint mapFromHyprlandLayout(const QPoint &point)
++{
++    if (qEnvironmentVariableIsEmpty("HYPRLAND_INSTANCE_SIGNATURE")) {
++        return point;
++    }
++
++    QProcess hyprctl;
++    hyprctl.start(QStringLiteral("hyprctl"), {QStringLiteral("-j"), QStringLiteral("monitors")});
++    if (!hyprctl.waitForFinished(1000) || hyprctl.exitStatus() != QProcess::NormalExit || hyprctl.exitCode() != 0) {
++        qCWarning(SNIPROXY) << "Could not query hyprctl for the monitor layout";
++        return point;
++    }
++
++    const QJsonArray monitors = QJsonDocument::fromJson(hyprctl.readAllStandardOutput()).array();
++    for (const QJsonValue &value : monitors) {
++        const QJsonObject monitor = value.toObject();
++        const qreal scale = monitor[QLatin1String("scale")].toDouble(1);
++        QSizeF size(monitor[QLatin1String("width")].toDouble() / scale, monitor[QLatin1String("height")].toDouble() / scale);
++        if (monitor[QLatin1String("transform")].toInt() % 2 == 1) { // rotated by 90 or 270 degrees
++            size.transpose();
++        }
++        const QRectF layout(QPointF(monitor[QLatin1String("x")].toDouble(), monitor[QLatin1String("y")].toDouble()), size);
++        if (size.isEmpty() || !layout.contains(point)) {
++            continue;
++        }
++
++        const auto screens = QGuiApplication::screens();
++        for (const QScreen *screen : screens) {
++            if (screen->name() != monitor[QLatin1String("name")].toString()) {
++                continue;
++            }
++            // position is in X11 pixels, size is divided by the device pixel ratio
++            const QPoint origin = screen->geometry().topLeft();
++            const QSizeF x11Size = QSizeF(screen->geometry().size()) * screen->devicePixelRatio();
++            return QPoint(origin.x() + qRound((point.x() - layout.x()) * x11Size.width() / layout.width()),
++                          origin.y() + qRound((point.y() - layout.y()) * x11Size.height() / layout.height()));
++        }
++    }
++    return point;
++}
++
+ void SNIProxy::sendClick(uint8_t mouseButton, int x, int y)
+ {
++    const QPoint x11Point = mapFromHyprlandLayout(QPoint(x, y));
++    x = x11Point.x();
++    y = x11Point.y();
++
+     // it's best not to look at this code
+     // GTK doesn't like send_events and double checks the mouse position matches where the window is and is top level
+     // in order to solve this we move the embed container over to where the mouse is then replay the event using send_event

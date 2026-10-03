@@ -1,0 +1,17 @@
+diff --color -ruN a/xembed-sni-proxy/sniproxy.cpp b/xembed-sni-proxy/sniproxy.cpp
+--- a/xembed-sni-proxy/sniproxy.cpp	2026-10-04 00:25:26.299757174 +0200
++++ b/xembed-sni-proxy/sniproxy.cpp	2026-10-04 00:25:26.319273269 +0200
+@@ -525,6 +525,13 @@
+     const auto title = Title();
+     // we always need /some/ ID so if no window title exists, just use the winId.
+     if (title.isEmpty()) {
++        // Prefer the window class: unlike the winId it is the same on every launch,
++        // so trays can match on it (Wine leaves the title of its tray windows empty).
++        const KWindowInfo window(m_windowId, NET::Properties(), NET::WM2WindowClass);
++        const QByteArray windowClass = window.windowClassClass();
++        if (!windowClass.isEmpty()) {
++            return QString::fromUtf8(windowClass);
++        }
+         return QString::number(m_windowId);
+     }
+     return title;
