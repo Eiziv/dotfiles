@@ -29,9 +29,30 @@ tooltip {
 	background: rgba(0, 0, 0, 0.1);
 }
 
+/* Workspace buttons are pills inset 4px from the bar's edge, so their 13px radius
+   is concentric with the bar's 17px one. Everything GTK's theme draws on a button
+   (border, shadows, hover gradient) is reset here, as it otherwise shows up as a
+   square box on hover. */
 #workspaces button {
-	border-radius: 0;
-	margin-left: 1px;
+	margin: 4px 0 4px 4px;
+	padding: 0 6px;
+	min-width: 16px;
+	border: none;
+	border-radius: 13px;
+	outline: none;
+	box-shadow: none;
+	text-shadow: none;
+	background-color: transparent;
+	/* Active-workspace underline: 2px line that grows from the centre (see .active). */
+	background-image: linear-gradient(white, white);
+	background-repeat: no-repeat;
+	background-position: 50% 92%;
+	background-size: 0 2px;
+	transition: background-size 200ms ease-out, background-color 150ms ease-out;
+}
+
+#workspaces button:hover {
+	background-color: rgba(255, 255, 255, 0.12);
 }
 
 #tray window decoration{
@@ -40,9 +61,7 @@ tooltip {
 }
 
 #workspaces button.active {
-	border-bottom: 2px solid;
-	border-image: linear-gradient(to right, transparent 45%, white 45%, white 55%, transparent 55%) 10;
-	margin-top: 2px;
+	background-size: 10px 2px;
 }
 
 #clock, #tray, #pulseaudio, #cpu, #disk, #memory, #custom-mouse, #custom-power, #custom-control-center {
