@@ -1,13 +1,16 @@
 diff --color -ruN a/src/modules/sni/item.cpp b/src/modules/sni/item.cpp
---- a/src/modules/sni/item.cpp	2026-10-04 00:25:51.113748648 +0200
-+++ b/src/modules/sni/item.cpp	2026-10-04 00:25:51.133716273 +0200
-@@ -271,6 +271,12 @@
+--- a/src/modules/sni/item.cpp	2026-10-04 00:53:37.877421892 +0200
++++ b/src/modules/sni/item.cpp	2026-10-04 00:53:37.889102823 +0200
+@@ -271,6 +271,15 @@
        }
      }
  
 +    // An icon update from the app replaces icon_name/icon_pixmap, and with them any
-+    // icon set through the "icons" config, so apply that override again.
-+    if (update_pending_.count("IconName") || update_pending_.count("IconPixmap")) {
++    // icon set through the "icons" config, so apply that override again. Electron apps
++    // are matched by tooltip, which they may only set after registering, so a tooltip
++    // update has to apply it too.
++    if (update_pending_.count("IconName") || update_pending_.count("IconPixmap") ||
++        update_pending_.count("ToolTip")) {
 +      setCustomIcon(id == "chrome_status_icon_1" ? tooltip.text.lowercase() : Glib::ustring(id));
 +    }
 +

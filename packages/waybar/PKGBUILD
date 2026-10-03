@@ -15,7 +15,7 @@
 
 pkgname=waybar
 pkgver=0.15.0
-pkgrel=3.4
+pkgrel=3.5
 pkgdesc='Highly customizable Wayland bar for Sway and Wlroots based compositors'
 arch=('x86_64')
 url="https://github.com/Alexays/Waybar/"
@@ -71,7 +71,7 @@ source=("$pkgname-$pkgver.tar.gz::https://github.com/Alexays/Waybar/archive/$pkg
         'tray-sticky-custom-icons.patch'
         'hyprland-lua-dispatch.patch')
 b2sums=('3f0eb6cbf4ba189ddd37e82678ef87f877f6f48cf0bb699624c5d697c7164b11c3e25bf8fe382564c1e5891a6070d7c7e6d3009f8461a7087294dffccb78de95'
-        'e57d05b77b8797fd77e184e89d816ed95f17a544ec4f261c3d39af9e819cdd205c43eb1a5b913a037033f4151bd5f94f5f4b6cc2d06c2967482ba50cfbecdb96'
+        '2edd7032bba8d5803cc883e755951b759a99fef1a95874a0b756ec0abb923d9cfb92c232c61fa03855f273a364e442c4701d4827861bc2e185dc3648b4228263'
         '249c373ad77d75753c483c1f880a400fa5499f9e197f5658944ac5c6074fc04d01c49540ddc7d7ce1ad92733e6274d1a843f9ed830bd6a28ee8e216bc75464cc')
 
 prepare() {
