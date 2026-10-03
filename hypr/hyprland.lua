@@ -81,6 +81,17 @@ hl.window_rule({
     immediate = true,
 })
 
+-- Battle.net (Proton via Faugus). The class is shared by every umu game without
+-- its own ID, so match on the title too.
+hl.window_rule({
+    name = "battlenet-float",
+    match = {
+        class = "^steam_app_default$",
+        title = "^Battle\\.net.*",
+    },
+    float = true,
+})
+
 -- xembedsniproxy (packages/xembedsniproxy) puts Wine/Proton tray icons such as
 -- Battle.net into Waybar's tray. It keeps a small helper window mapped for the
 -- icons it hosts, which Hyprland would otherwise show as a floating window.
