@@ -1,5 +1,9 @@
-# Local build of Arch's waybar package (0.15.0-3) plus grayscale-tray.patch, which
-# renders all tray icons in grayscale (GTK3 CSS has no filter to do this).
+# Local build of Arch's waybar package (0.15.0-3) plus two patches:
+#  - grayscale-tray.patch: renders all tray icons in grayscale (GTK3 CSS has no
+#    filter to do this).
+#  - hyprland-lua-dispatch.patch: backport of upstream's fix so clicking a workspace
+#    works with Hyprland's Lua config (>= 0.55), which rejects the old dispatch
+#    syntax. Drop it once a Waybar release includes it.
 # pkgrel is kept just above the CachyOS repo build (3.1) so pacman doesn't replace it
 # straight away; any newer repo build will, and this then needs a rebase and rebuild:
 #   makepkg -si
@@ -11,7 +15,7 @@
 
 pkgname=waybar
 pkgver=0.15.0
-pkgrel=3.2
+pkgrel=3.3
 pkgdesc='Highly customizable Wayland bar for Sway and Wlroots based compositors'
 arch=('x86_64')
 url="https://github.com/Alexays/Waybar/"
@@ -64,13 +68,16 @@ optdepends=(
     'otf-font-awesome: Icons in the default configuration'
 )
 source=("$pkgname-$pkgver.tar.gz::https://github.com/Alexays/Waybar/archive/$pkgver.tar.gz"
-        'grayscale-tray.patch')
+        'grayscale-tray.patch'
+        'hyprland-lua-dispatch.patch')
 b2sums=('3f0eb6cbf4ba189ddd37e82678ef87f877f6f48cf0bb699624c5d697c7164b11c3e25bf8fe382564c1e5891a6070d7c7e6d3009f8461a7087294dffccb78de95'
-        'f9526d22341b7260b4a92d0234931e49f4767588085de90fe7d35c57f57bb646b33f870d8d624283231e5e4044c19a195f61e1022b630b2ea2a303893f8a8703')
+        'f9526d22341b7260b4a92d0234931e49f4767588085de90fe7d35c57f57bb646b33f870d8d624283231e5e4044c19a195f61e1022b630b2ea2a303893f8a8703'
+        '249c373ad77d75753c483c1f880a400fa5499f9e197f5658944ac5c6074fc04d01c49540ddc7d7ce1ad92733e6274d1a843f9ed830bd6a28ee8e216bc75464cc')
 
 prepare() {
     cd "Waybar-$pkgver"
     patch -Np1 -i "$srcdir/grayscale-tray.patch"
+    patch -Np1 -i "$srcdir/hyprland-lua-dispatch.patch"
 }
 
 build() {
