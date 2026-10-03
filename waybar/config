@@ -6,6 +6,7 @@
         "tooltip-format": "<tt><big>{calendar}</big></tt>",
         "calendar": {
                     "mode"          : "month",
+                    "iso8601"       : true,
                     "mode-mon-col"  : 3,
                     "weeks-pos"     : "right",
                     "on-scroll"     : 1,
