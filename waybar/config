@@ -30,7 +30,7 @@
       "on-click": "bash $HOME/.config/waybar/eww/scripts/toggle.sh"
     },
     "tray": {
-      "icon-size": 18,
+      "icon-size": 16,
       "spacing": 10,
       "icons": {
         "Signal_status_icon_1": "/home/vizie/.config/waybar/icons/signal.svg",
