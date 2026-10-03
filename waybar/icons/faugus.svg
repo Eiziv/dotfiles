@@ -1,0 +1,11 @@
+<!-- faugus: hand-drawn gamepad for the Waybar tray -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32">
+  <mask id="cut">
+    <rect width="24" height="24" fill="#ffffff"/>
+    <rect x="4" y="9.5" width="7" height="3" fill="#000000"/>
+    <rect x="6" y="7.5" width="3" height="7" fill="#000000"/>
+    <circle cx="15.5" cy="12.5" r="1.75" fill="#000000"/>
+    <circle cx="19" cy="9.25" r="1.75" fill="#000000"/>
+  </mask>
+  <path fill="#ffffff" mask="url(#cut)" d="M6.5 4.5h11A5.5 5.5 0 0 1 23 10v6a3.5 3.5 0 0 1-6.4 2L15.2 16H8.8l-1.4 2A3.5 3.5 0 0 1 1 16v-6a5.5 5.5 0 0 1 5.5-5.5z"/>
+</svg>

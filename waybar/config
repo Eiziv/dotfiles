@@ -42,7 +42,15 @@
     },
     "tray": {
       "icon-size": 16,
-      "spacing": 10
+      "spacing": 10,
+      "icons": {
+        "Signal_status_icon_1": "/home/vizie/.config/waybar/icons/signal.svg",
+        "bitwarden": "/home/vizie/.config/waybar/icons/bitwarden.svg",
+        "Claude_status_icon_1": "/home/vizie/.config/waybar/icons/claude.svg",
+        "steam_app_default": "/home/vizie/.config/waybar/icons/battlenet.svg",
+        "faugus-launcher": "/home/vizie/.config/waybar/icons/faugus.svg",
+        "tray-icon tray app opendeck": "/home/vizie/.config/waybar/icons/opendeck.svg"
+      }
     },
     "pulseaudio#sink": {
       "scroll-step": 5,
