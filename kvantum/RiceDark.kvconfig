@@ -1,0 +1,87 @@
+# RiceDark — Kvantum's bundled KvArcDark theme, unmodified except for the
+# accent color, changed to match this rig's cyan (see hypr/hyprland.lua's
+# active_border rgb(aaffff)). Everything else is copied verbatim from
+# KvArcDark since that's the theme actually confirmed to render correctly
+# in Dolphin -- minimal diff from a known-good file, on purpose.
+#
+# Shapes/frames come from KvArcDark.svg (copied onto this machine by
+# kvantum/install.sh, not tracked in git -- it's the upstream package asset).
+
+[%General]
+author=Tsu Jan (accent color adapted)
+comment=A minimalistic dark theme inspired by the Arc GTK theme, cyan accent
+x11drag=menubar_and_primary_toolbar
+alt_mnemonic=true
+left_tabs=true
+attach_active_tab=true
+mirror_doc_tabs=true
+group_toolbar_buttons=false
+toolbar_item_spacing=1
+toolbar_interior_spacing=3
+spread_progressbar=true
+composite=true
+menu_shadow_depth=5
+menu_separator_height=6
+tooltip_shadow_depth=6
+splitter_width=4
+scroll_width=9
+scroll_arrows=false
+scroll_min_extent=60
+slider_width=6
+slider_handle_width=18
+slider_handle_length=18
+center_toolbar_handle=true
+check_size=14
+textless_progressbar=false
+progressbar_thickness=3
+menubar_mouse_tracking=true
+toolbutton_style=1
+click_behavior=0
+translucent_windows=false
+blurring=false
+popup_blurring=false
+vertical_spin_indicators=false
+spin_button_width=32
+fill_rubberband=false
+merge_menubar_with_toolbar=true
+small_icon_size=16
+large_icon_size=32
+button_icon_size=16
+toolbar_icon_size=22
+combo_as_lineedit=true
+animate_states=false
+combo_menu=true
+hide_combo_checkboxes=true
+combo_focus_rect=true
+groupbox_top_label=true
+inline_spin_indicators=false
+joined_inactive_tabs=false
+layout_spacing=6
+layout_margin=9
+scrollbar_in_view=true
+transient_scrollbar=true
+transient_groove=true
+submenu_overlap=3
+tooltip_delay=-1
+tree_branch_line=true
+
+[GeneralColors]
+window.color=#383c4a
+base.color=#404552
+alt.base.color=#3c434f
+button.color=#414654
+light.color=#5f677f
+mid.light.color=#313131
+dark.color=black
+mid.color=#191919
+highlight.color=#7fe0e0
+inactive.highlight.color=#5fb0b0
+text.color=#ffffffc8
+window.text.color=#ffffffc8
+button.text.color=#ffffffc8
+disabled.text.color=#ffffff73
+tooltip.text.color=#eefcff
+highlight.text.color=white
+link.color=#aaffff
+link.visited.color=#9E4FFF
+progress.indicator.text.color=black
