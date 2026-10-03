@@ -11,11 +11,11 @@
                     "weeks-pos"     : "right",
                     "on-scroll"     : 1,
                     "format": {
-                              "months":     "<span color='#ffead3'><b>{}</b></span>",
-                              "days":       "<span color='#ecc6d9'><b>{}</b></span>",
-                              "weeks":      "<span color='#99ffdd'><b>W{:%V}</b></span>",
-                              "weekdays":   "<span color='#ffcc66'><b>{}</b></span>",
-                              "today":      "<span color='#ff6699'><b><u>{}</u></b></span>"
+                              "months":     "<span color='#ffffff'><b>{}</b></span>",
+                              "days":       "<span color='#ffffff'>{}</span>",
+                              "weeks":      "<span color='#8a8a8a'>W{:%V}</span>",
+                              "weekdays":   "<span color='#b0b0b0'><b>{}</b></span>",
+                              "today":      "<span color='#aaffff'><b><u>{}</u></b></span>"
                               }
                     },
         "actions":  {
@@ -24,24 +24,13 @@
                     "on-scroll-down": "shift_down"
                     }
     },
-    "custom/power": {
-      "format": "<span size='12288'>󰐥</span>",
-      "on-click": "bash $HOME/.config/waybar/scripts/poweroff.sh"
-    },
-    "custom/mouse": {
-      "exec": "bash $HOME/.config/waybar/scripts/mouse-battery.sh",
-      "return-type": "json",
-      "format": "<span size='12288'>{text}</span>",
-      "interval": 30,
-      "hide-empty-text": true
-    },
     "custom/control-center": {
       "format": " ",
       "tooltip": false,
       "on-click": "bash $HOME/.config/waybar/eww/scripts/toggle.sh"
     },
     "tray": {
-      "icon-size": 16,
+      "icon-size": 18,
       "spacing": 10,
       "icons": {
         "Signal_status_icon_1": "/home/vizie/.config/waybar/icons/signal.svg",
@@ -50,30 +39,9 @@
         "Claude_status_icon_1": "/home/vizie/.config/waybar/icons/claude.svg",
         "steam_app_default": "/home/vizie/.config/waybar/icons/battlenet.svg",
         "faugus-launcher": "/home/vizie/.config/waybar/icons/faugus.svg",
+        "steam": "/home/vizie/.config/waybar/icons/steam.svg",
         "tray-icon tray app opendeck": "/home/vizie/.config/waybar/icons/opendeck.svg"
       }
-    },
-    "pulseaudio#sink": {
-      "scroll-step": 5,
-      "format": "<span size='12288'>{icon}</span>  <span rise='1536'>{volume}%</span>",
-      "format-muted": "<span size='12288'>󰝟</span>  {format_source}",
-      "format-icons": {
-        "default": [
-          "󰕿",
-          "󰖀",
-          "󰕾"
-        ]
-      }
-    },
-    "pulseaudio#source": {
-      "scroll-step": 5,
-      "format": "{format_source}",
-      "format-source": "<span size='12288'>󰍬</span>  <span rise='1536'>{volume}%</span>",
-      "format-source-muted": "<span size='12288'>󰍭</span>"
-    },
-    "cpu": {
-      "format": "<span size='12288'>󰻠</span>  <span rise='1536'>{usage}%</span>",
-      "interval": 1
     },
     "custom/imsh-cast-monitor": {
       "format": "{text}",
@@ -81,22 +49,16 @@
       "return-type": "json",
       "hide-empty-text": true
     },
-    "disk": {
-      "format": "<span size='12288'>󰆓</span>  <span rise='1536'>{percentage_used}%</span>",
-      "interval": 1,
-      "path": "/"
-    },
     "height": 36,
+    "hyprland/window": {
+      "max-length": 60
+    },
     "hyprland/workspaces": {
       "format": "{name}",
       "on-click": "activate",
       "sort-by": "number"
     },
     "layer": "top",
-    "memory": {
-      "format": "<span size='12288'>󰍛</span>  <span rise='1536'>{percentage}%</span>",
-      "interval": 1
-    },
     "modules-center": [
       "custom/imsh-cast-monitor",
       "clock"

@@ -64,7 +64,17 @@ tooltip {
 	background-size: 10px 2px;
 }
 
-#clock, #tray, #pulseaudio, #cpu, #disk, #memory, #custom-mouse, #custom-power, #custom-control-center {
+/* Workspaces with no windows are dimmed, unless it's the one you're on. The colour
+   goes on the label because the `*` rule above gives every label its own white. */
+#workspaces button label {
+	transition: color 150ms ease-out;
+}
+
+#workspaces button.empty:not(.active) label {
+	color: rgba(255, 255, 255, 0.4);
+}
+
+#clock, #tray, #custom-control-center {
 	padding: 0 7px;
 }
 
@@ -74,18 +84,6 @@ tooltip {
 
 .imsh-cast-monitor.error {
     color: #ff0;
-}
-
-#custom-mouse.charging {
-    color: #99ffdd;
-}
-
-#custom-mouse.warning {
-    color: #ffcc66;
-}
-
-#custom-mouse.critical {
-    color: #ff5555;
 }
 
 /* Control-center button: your logo as a pre-rendered 18px image.
