@@ -1,0 +1,16 @@
+diff --color -ruN a/src/modules/sni/item.cpp b/src/modules/sni/item.cpp
+--- a/src/modules/sni/item.cpp	2026-10-04 00:25:51.113748648 +0200
++++ b/src/modules/sni/item.cpp	2026-10-04 00:25:51.133716273 +0200
+@@ -271,6 +271,12 @@
+       }
+     }
+ 
++    // An icon update from the app replaces icon_name/icon_pixmap, and with them any
++    // icon set through the "icons" config, so apply that override again.
++    if (update_pending_.count("IconName") || update_pending_.count("IconPixmap")) {
++      setCustomIcon(id == "chrome_status_icon_1" ? tooltip.text.lowercase() : Glib::ustring(id));
++    }
++
+     this->updateImage();
+   } catch (const Glib::Error& err) {
+     spdlog::warn("Failed to update properties: {}", err.what());
