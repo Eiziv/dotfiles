@@ -1,0 +1,45 @@
+diff --color -ruN a/xembed-sni-proxy/sniproxy.cpp b/xembed-sni-proxy/sniproxy.cpp
+--- a/xembed-sni-proxy/sniproxy.cpp	2026-10-04 00:18:30.351463483 +0200
++++ b/xembed-sni-proxy/sniproxy.cpp	2026-10-04 00:18:30.371083720 +0200
+@@ -215,6 +215,33 @@
+     QDBusConnection::disconnectFromBus(m_dbus.name());
+ }
+ 
++// Crop the fully transparent margin around an icon, keeping the icon centred.
++// Wine, for one, draws a 16px icon in a 20px window; a tray that scales the whole
++// pixmap to its icon size then shows it smaller than every other icon.
++static QImage trimTransparentMargin(const QImage &image)
++{
++    if (!image.hasAlphaChannel()) {
++        return image;
++    }
++
++    const int w = image.width();
++    const int h = image.height();
++    int margin = std::min(w, h);
++    for (int y = 0; y < h; ++y) {
++        for (int x = 0; x < w; ++x) {
++            if (qAlpha(image.pixel(x, y)) != 0) {
++                margin = std::min({margin, x, y, w - 1 - x, h - 1 - y});
++            }
++        }
++    }
++
++    // nothing to trim, or nothing but margin
++    if (margin <= 0 || margin * 2 >= std::min(w, h)) {
++        return image;
++    }
++    return image.copy(margin, margin, w - 2 * margin, h - 2 * margin);
++}
++
+ void SNIProxy::update()
+ {
+     QImage image = getImageNonComposite();
+@@ -222,6 +249,7 @@
+         qCDebug(SNIPROXY) << "No xembed icon for" << m_windowId << Title();
+         return;
+     }
++    image = trimTransparentMargin(image);
+ 
+     int w = image.width();
+     int h = image.height();

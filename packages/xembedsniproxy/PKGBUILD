@@ -9,7 +9,7 @@
 
 pkgname=xembedsniproxy
 pkgver=6.7.5
-pkgrel=1
+pkgrel=2
 pkgdesc='Show legacy XEmbed tray icons in StatusNotifierItem trays (standalone build from plasma-workspace)'
 arch=('x86_64')
 url='https://invent.kde.org/plasma/plasma-workspace/-/tree/master/xembed-sni-proxy'
@@ -35,13 +35,18 @@ makedepends=(
 )
 conflicts=('plasma-workspace')
 source=("https://download.kde.org/stable/plasma/$pkgver/plasma-workspace-$pkgver.tar.xz"
-        'CMakeLists.txt')
+        'CMakeLists.txt'
+        'trim-icon-margin.patch')
 # Tarball checksum matches Arch's plasma-workspace package.
 sha256sums=('94ab21e2243b7876f65c315f1e545081c6437f5bd0a041ca4fb6c2533ae874c9'
-            'f6dbdaabd76a623139a34e3d48717b37da7dd9d8f2f159ea8e06d7ff8577547c')
+            'f6dbdaabd76a623139a34e3d48717b37da7dd9d8f2f159ea8e06d7ff8577547c'
+            'd8ffe96435a4bc1d71e2373fcbee2f869026bcb736593d325df11fcb4a395a8d')
 
 prepare() {
     cp CMakeLists.txt "plasma-workspace-$pkgver/xembed-sni-proxy/CMakeLists.txt"
+    # Crop the transparent margin Wine leaves around its icons, so they aren't shown
+    # smaller than the other tray icons.
+    patch -d "plasma-workspace-$pkgver" -Np1 -i "$srcdir/trim-icon-margin.patch"
 }
 
 build() {
