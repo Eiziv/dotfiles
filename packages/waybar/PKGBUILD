@@ -1,0 +1,115 @@
+# Local build of Arch's waybar package (0.15.0-3) plus grayscale-tray.patch, which
+# renders all tray icons in grayscale (GTK3 CSS has no filter to do this).
+# pkgrel is kept just above the CachyOS repo build (3.1) so pacman doesn't replace it
+# straight away; any newer repo build will, and this then needs a rebase and rebuild:
+#   makepkg -si
+#
+# Maintainer: Brett Cornwall <ainola@archlinux.org>
+# Maintainer: Robin Candau <antiz@archlinux.org>
+# Contributor: Maxim Baz <archlinux at maximbaz dot com>
+# Contributor: Parmjot Singh <parmjotsinghrobot at gmail dot com>
+
+pkgname=waybar
+pkgver=0.15.0
+pkgrel=3.2
+pkgdesc='Highly customizable Wayland bar for Sway and Wlroots based compositors'
+arch=('x86_64')
+url="https://github.com/Alexays/Waybar/"
+license=('MIT')
+depends=(
+    'atkmm'
+    'cairomm'
+    'fmt'
+    'glib2'
+    'glibc'
+    'glibmm'
+    'gpsd'
+    'gtk-layer-shell'
+    'gtk3'
+    'gtkmm3'
+    'jack'
+    'jsoncpp'
+    'libdbusmenu-gtk3'
+    'libevdev'
+    'libgcc'
+    'libinput'
+    'libmpdclient'
+    'libnl'
+    'libpipewire'
+    'libpulse'
+    'libsigc++'
+    'libstdc++'
+    'libwireplumber'
+    'libxkbcommon'
+    'playerctl'
+    'sndio'
+    'spdlog'
+    'systemd-libs'
+    'upower'
+    'wayland'
+)
+makedepends=(
+    'catch2'
+    'cmake'
+    'meson'
+    'glib2-devel' # gdbus-codegen
+    'scdoc' # For generating manpages
+    'wayland-protocols'
+)
+backup=(
+    etc/xdg/waybar/config.jsonc
+    etc/xdg/waybar/style.css
+)
+optdepends=(
+    'otf-font-awesome: Icons in the default configuration'
+)
+source=("$pkgname-$pkgver.tar.gz::https://github.com/Alexays/Waybar/archive/$pkgver.tar.gz"
+        'grayscale-tray.patch')
+b2sums=('3f0eb6cbf4ba189ddd37e82678ef87f877f6f48cf0bb699624c5d697c7164b11c3e25bf8fe382564c1e5891a6070d7c7e6d3009f8461a7087294dffccb78de95'
+        'f9526d22341b7260b4a92d0234931e49f4767588085de90fe7d35c57f57bb646b33f870d8d624283231e5e4044c19a195f61e1022b630b2ea2a303893f8a8703')
+
+prepare() {
+    cd "Waybar-$pkgver"
+    patch -Np1 -i "$srcdir/grayscale-tray.patch"
+}
+
+build() {
+    cd "Waybar-$pkgver"
+    meson --prefix=/usr \
+          --buildtype=plain \
+          --auto-features=enabled \
+          --wrap-mode=nodownload \
+          -Dcpp_std=c++20 \
+          -Dexperimental=true \
+          -Dcava=disabled \
+          -Dtests=enabled \
+          build
+    meson compile -C build
+}
+
+check() {
+    cd "Waybar-$pkgver"
+    # The hyprland socket-path tests pick up the live session's signature when this is
+    # built from inside Hyprland (rather than a clean chroot) and fail, so hide it.
+    env -u HYPRLAND_INSTANCE_SIGNATURE \
+        meson test -C build --print-errorlogs --no-rebuild --suite waybar
+}
+
+package() {
+    depends+=(
+      'libatkmm-1.6.so'
+      'libcairomm-1.0.so'
+      'libgtk-3.so'
+      'libjack.so'
+      'libjsoncpp.so'
+      'libpipewire-0.3.so'
+      'libsndio.so'
+      'libspdlog.so'
+      'libudev.so'
+      'libupower-glib.so'
+    )
+
+    cd "Waybar-$pkgver"
+    meson install -C build --destdir "$pkgdir"
+    install -Dm644 LICENSE -t "$pkgdir/usr/share/licenses/$pkgname/"
+}

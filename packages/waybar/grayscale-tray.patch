@@ -1,0 +1,15 @@
+--- a/src/modules/sni/item.cpp	2026-10-03 23:39:39.421074646 +0200
++++ b/src/modules/sni/item.cpp	2026-10-03 23:39:39.433074617 +0200
+@@ -376,6 +376,12 @@
+     pixbuf = pixbuf->scale_simple(width, scaled_icon_size, Gdk::InterpType::INTERP_BILINEAR);
+   }
+ 
++  // Render every tray icon in grayscale. Desaturate into a copy, as the pixbuf may be the
++  // item's cached icon_pixmap.
++  auto grayscale = pixbuf->copy();
++  pixbuf->saturate_and_pixelate(grayscale, 0.0F, false);
++  pixbuf = grayscale;
++
+   auto surface =
+       Gdk::Cairo::create_surface_from_pixbuf(pixbuf, image.get_scale_factor(), image.get_window());
+   image.set(surface);
