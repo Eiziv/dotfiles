@@ -241,14 +241,19 @@ hl.config({
     --ENVIROMENT#
     --CURSOR#
     cursor = {
-        -- Hardware cursor: a software cursor forces Hyprland to composite every
-        -- frame, which blocks direct scanout (and with it tearing) for games.
-        -- Set back to true if the cursor flickers or disappears on NVIDIA.
-        no_hardware_cursors = false,
+        -- Software cursor, for tearing. Hyprland (0.56) refuses to tear while a
+        -- hardware cursor is visible, because the kernel can't update the cursor
+        -- plane during a tearing flip. So with a hardware cursor a game only tears
+        -- while it hides the pointer (e.g. mouselook) and is vsynced otherwise, and
+        -- switching back and forth left WoW's cursor shape stale. With a software
+        -- cursor the game tears all the time; the price is that frames are
+        -- composited (one extra copy) while the pointer is visible.
+        no_hardware_cursors = true,
     },
     render = {
         -- Fullscreen games (e.g. WoW) scan out straight to the monitor instead of
-        -- being copied by the compositor: lower latency, lets tearing work.
+        -- being copied by the compositor. With the software cursor above this only
+        -- applies while the game hides the pointer.
         -- 1 = always; XWayland games don't set a content type, so 2 (auto) won't trigger.
         direct_scanout = 1,
     },
