@@ -32,6 +32,7 @@
     "tray": {
       "icon-size": 16,
       "spacing": 10,
+      "order": ["discord_status_icon_1"],
       "icons": {
         "Signal_status_icon_1": "/home/vizie/.config/waybar/icons/signal.svg",
         "bitwarden": "/home/vizie/.config/waybar/icons/bitwarden.svg",

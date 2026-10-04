@@ -1,0 +1,116 @@
+diff --color -ruN a/include/modules/sni/item.hpp b/include/modules/sni/item.hpp
+--- a/include/modules/sni/item.hpp	2026-10-04 20:48:34.950686997 +0200
++++ b/include/modules/sni/item.hpp	2026-10-04 20:48:34.961979805 +0200
+@@ -12,7 +12,9 @@
+ #include <sigc++/trackable.h>
+ 
+ #include <set>
++#include <string>
+ #include <string_view>
++#include <vector>
+ 
+ #include "bar.hpp"
+ 
+@@ -63,6 +65,7 @@
+   void setProperty(const Glib::ustring& name, Glib::VariantBase& value);
+   void setStatus(const Glib::ustring& value);
+   void setCustomIcon(const std::string& id);
++  void applyOrder();
+   void getUpdatedProperties();
+   void processUpdatedProperties(Glib::RefPtr<Gio::AsyncResult>& result);
+   void onSignal(const Glib::ustring& sender_name, const Glib::ustring& signal_name,
+@@ -86,6 +89,8 @@
+   gdouble distance_scrolled_y_ = 0;
+   // visibility of items with Status == Passive
+   bool show_passive_ = false;
++  // item ids from the "order" config; these are placed first, in this order
++  std::vector<std::string> order_;
+ 
+   const Bar& bar_;
+ 
+diff --color -ruN a/src/modules/sni/item.cpp b/src/modules/sni/item.cpp
+--- a/src/modules/sni/item.cpp	2026-10-04 20:48:34.949687001 +0200
++++ b/src/modules/sni/item.cpp	2026-10-04 20:48:34.962215355 +0200
+@@ -5,6 +5,8 @@
+ #include <gtkmm/tooltip.h>
+ #include <spdlog/spdlog.h>
+ 
++#include <algorithm>
++#include <climits>
+ #include <filesystem>
+ #include <fstream>
+ #include <map>
+@@ -53,6 +55,13 @@
+   if (config["show-passive-items"].isBool()) {
+     show_passive_ = config["show-passive-items"].asBool();
+   }
++  if (config["order"].isArray()) {
++    for (const auto& entry : config["order"]) {
++      if (entry.isString()) {
++        order_.push_back(entry.asString());
++      }
++    }
++  }
+ 
+   auto& window = const_cast<Bar&>(bar).window;
+   window.signal_configure_event().connect_notify(sigc::mem_fun(*this, &Item::onConfigure));
+@@ -115,6 +124,7 @@
+       return;
+     }
+     this->updateImage();
++    this->applyOrder();
+ 
+   } catch (const Glib::Error& err) {
+     spdlog::error("Failed to create DBus Proxy for {} {}: {}", bus_name, object_path, err.what());
+@@ -250,6 +260,41 @@
+   }
+ }
+ 
++/**
++ * Sort this item's tray according to the "order" config: items listed there come first,
++ * in the listed order, and all others keep their relative order after them. Items are
++ * matched like in the "icons" config, i.e. Electron's "chrome_status_icon_1" by tooltip.
++ * Runs once an item knows its id, as that is only available after its proxy is ready.
++ */
++void Item::applyOrder() {
++  if (order_.empty()) {
++    return;
++  }
++  static const Glib::Quark rank_key("waybar-tray-order");
++
++  const std::string key = id == "chrome_status_icon_1" ? tooltip.text.lowercase().raw() : id;
++  const auto listed = std::find(order_.begin(), order_.end(), key);
++  // 0 (no data) means unlisted
++  event_box.set_data(rank_key, listed == order_.end()
++                                   ? nullptr
++                                   : GINT_TO_POINTER(std::distance(order_.begin(), listed) + 1));
++
++  auto* box = dynamic_cast<Gtk::Box*>(event_box.get_parent());
++  if (box == nullptr) {
++    return;
++  }
++  const auto rank = [](Gtk::Widget* widget) {
++    const int value = GPOINTER_TO_INT(widget->get_data(rank_key));
++    return value == 0 ? INT_MAX : value;
++  };
++  auto children = box->get_children();
++  std::stable_sort(children.begin(), children.end(),
++                   [&rank](Gtk::Widget* a, Gtk::Widget* b) { return rank(a) < rank(b); });
++  for (std::size_t i = 0; i < children.size(); ++i) {
++    box->reorder_child(*children[i], static_cast<int>(i));
++  }
++}
++
+ void Item::getUpdatedProperties() {
+   auto params = Glib::VariantContainerBase::create_tuple(
+       {Glib::Variant<Glib::ustring>::create(SNI_INTERFACE_NAME)});
+@@ -279,6 +324,9 @@
+         update_pending_.count("ToolTip")) {
+       setCustomIcon(id == "chrome_status_icon_1" ? tooltip.text.lowercase() : Glib::ustring(id));
+     }
++    if (update_pending_.count("ToolTip")) {
++      this->applyOrder();
++    }
+ 
+     this->updateImage();
+   } catch (const Glib::Error& err) {
