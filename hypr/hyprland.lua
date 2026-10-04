@@ -190,18 +190,21 @@ hl.env("QT_QPA_PLATFORMTHEME", "qt6ct")
 
 hl.config({
     general = {
-        border_size = 2,
+        border_size = 1,
         gaps_in = 5,
         gaps_out = 17,
         layout = "dwindle",
         col = {
-            active_border = "rgb(aaffff)",
+            active_border = "rgba(00000000)",
             inactive_border = "rgba(00000000)",
         },
         allow_tearing = true,
     },
     decoration = {
         rounding = 10,
+        -- No visible borders; the focused window is the one that isn't dimmed.
+        dim_inactive = true,
+        dim_strength = 0.15,
         blur = {
             enabled = true,
             size = 9,
