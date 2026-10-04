@@ -275,6 +275,43 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("xembedsniproxy")
     hl.exec_cmd("~/.config/hypr/scripts/xwl-clipbridge") -- forward X11 clipboard (Wine/Proton games) to Wayland regardless of focus
     hl.exec_cmd("systemctl --user start hyprpolkitagent")
+
+    -- Apps opened at login, in their usual places (scripts/autostart-apps starts
+    -- them). These placement rules are switched off again after two minutes, so
+    -- opening the same apps by hand later behaves like any other window.
+    local startup_rules = {
+        hl.window_rule({
+            name = "startup-signal",
+            match = { class = "^signal$" },
+            workspace = "3 silent",
+        }),
+        hl.window_rule({
+            name = "startup-discord",
+            match = { class = "^discord$" },
+            workspace = "3 silent",
+        }),
+        -- Tray apps: scripts/autostart-apps closes whatever window they open, so
+        -- open it out of sight.
+        hl.window_rule({
+            name = "startup-tray-apps",
+            match = { class = "^(opendeck|WowUpCf)$" },
+            workspace = "special:autostart silent",
+        }),
+        hl.window_rule({
+            name = "startup-faugus",
+            match = { class = "^io\\.github\\.Faugus\\.faugus-launcher$" },
+            workspace = "1 silent",
+            float = true,
+            size = { 430, 610 },
+            move = { 1901, 333 },
+        }),
+    }
+    hl.timer(function()
+        for _, rule in ipairs(startup_rules) do
+            rule:set_enabled(false)
+        end
+    end, { timeout = 120000, type = "oneshot" })
+    hl.exec_cmd("~/.config/hypr/scripts/autostart-apps")
    -- hl.exec_cmd("gsettings set org.gnome.desktop.interface color-scheme prefer-dark")
    -- hl.exec_cmd("gsettings set org.gnome.desktop.interface gtk-theme Adwaita-dark")
 end)

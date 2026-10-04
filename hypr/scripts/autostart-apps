@@ -1,0 +1,86 @@
+#!/bin/bash
+# Apps opened at login. Run once by hyprland.lua (hl.on("hyprland.start")).
+#
+#   OpenDeck, WowUp   to the tray: any window they open is closed again
+#   Faugus            its window on workspace 1
+#   Signal, Discord   workspace 3, Signal on top and Discord below it
+#
+# Which workspace a window lands on (and Faugus' position) is decided by the
+# temporary "startup-*" window rules next to the call in hyprland.lua; this script
+# starts the apps, closes the tray apps' windows and stacks Signal above Discord.
+# Apps that are already running are left alone, so the script is safe to run again
+# by hand.
+
+SIGNAL_HEIGHT=802 # px; Discord gets the rest of the (portrait) monitor
+
+running() { pgrep -f "$1" >/dev/null 2>&1; }
+launch() { setsid -f "$@" >/dev/null 2>&1; }
+dispatch() { hyprctl dispatch "$1" >/dev/null 2>&1; }
+
+# Tray apps only show an icon if the tray already exists when they start.
+for _ in $(seq 40); do
+  busctl --user status org.kde.StatusNotifierWatcher >/dev/null 2>&1 && break
+  sleep 0.5
+done
+
+# Closes the first window of class $1 that shows up within $2 seconds. Both tray
+# apps keep running in the tray when their window is closed. The startup rules open
+# these windows on a hidden special workspace, so they never appear on screen.
+close_when_shown() {
+  local address
+  for _ in $(seq $(($2 * 2))); do
+    address=$(hyprctl clients -j | python3 -c '
+import json, sys
+print(next((c["address"] for c in json.load(sys.stdin) if c["class"] == sys.argv[1]), ""))' "$1")
+    if [ -n "$address" ]; then
+      dispatch "hl.dsp.window.close({ window = \"address:$address\" })"
+      return
+    fi
+    sleep 0.5
+  done
+}
+
+# Both have a start-hidden flag; WowUp shows its window regardless, and the same
+# safety net is kept for OpenDeck in case its flag ever stops working.
+if ! running '^/usr/bin/opendeck'; then
+  launch opendeck --hide
+  close_when_shown opendeck 15 &
+fi
+if ! running '^/opt/wowup-cf/wowup-cf'; then
+  launch wowup-cf --hidden
+  close_when_shown WowUpCf 40 &
+fi
+running 'faugus\.(launcher|tray_only)' || launch faugus-launcher
+running 'signal-desktop' || launch signal-desktop
+running '/Discord( |$)' || launch discord
+
+# --- Stack Signal above Discord ------------------------------------------------
+
+# Prints "address y width height" of the first mapped, tiled window whose class is $1,
+# ignoring small ones (Discord's updater splash).
+window() {
+  hyprctl clients -j | python3 -c '
+import json, sys
+for c in json.load(sys.stdin):
+    if c["class"] == sys.argv[1] and c.get("mapped", True) and not c["floating"] and c["size"][0] > 500:
+        print(c["address"], c["at"][1], c["size"][0], c["size"][1])
+        break
+' "$1"
+}
+
+for _ in $(seq 180); do
+  read -r signal_addr signal_y signal_w signal_h <<<"$(window signal)"
+  read -r discord_addr discord_y _ _ <<<"$(window discord)"
+  [ -n "$signal_addr" ] && [ -n "$discord_addr" ] && break
+  sleep 0.5
+done
+[ -n "$signal_addr" ] && [ -n "$discord_addr" ] || exit 0
+
+if [ "$signal_y" -gt "$discord_y" ]; then
+  dispatch "hl.dsp.window.move({ direction = \"u\", window = \"address:$signal_addr\" })"
+  sleep 0.3
+  read -r signal_addr signal_y signal_w signal_h <<<"$(window signal)"
+fi
+if [ "$signal_h" != "$SIGNAL_HEIGHT" ]; then
+  dispatch "hl.dsp.window.resize({ x = $signal_w, y = $SIGNAL_HEIGHT, window = \"address:$signal_addr\" })"
+fi
