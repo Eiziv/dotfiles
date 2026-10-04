@@ -1,7 +1,7 @@
-;; Control center flyout, opened from the Waybar button (scripts/toggle.sh).
-;; Two windows: `cc-closer` is an invisible click-catcher (click outside = close),
-;; `control-center` is the panel itself. Both take a `monitor` argument (a number),
-;; which scripts/toggle.sh fills in with the monitor you clicked on.
+;; Flyout panels opened from the Waybar buttons (scripts/toggle.sh): the control
+;; center and the notification list. `cc-closer` is an invisible click-catcher (click
+;; outside = close), shared by both panels. All windows take a `monitor` argument (a
+;; number), which scripts/toggle.sh fills in with the monitor you clicked on.
 
 ;; ---------------------------------------------------------------------------
 ;; State
@@ -29,6 +29,19 @@
   :initial "0"
   "df --output=pcent / | tail -1 | tr -dc '0-9'")
 
+;; Last notifications from dunst's history. Only polled while the panel is open;
+;; scripts/toggle.sh fills it once right before opening.
+(defvar notifs_open false)
+;; Clear animation (scripts/clear-notifications.sh): entries first slide out one after
+;; another (notifs_clearing), then the emptied list folds up (notifs_folded).
+(defvar notifs_clearing false)
+(defvar notifs_folded false)
+(defpoll notifs
+  :interval "2s"
+  :run-while notifs_open
+  :initial "[]"
+  "python3 $HOME/.config/waybar/eww/scripts/notifications.py")
+
 ;; ---------------------------------------------------------------------------
 ;; Windows
 ;; ---------------------------------------------------------------------------
@@ -40,7 +53,7 @@
   :namespace "eww-cc-closer"
   (eventbox :class "closer"
             :timeout "2s"
-            :onclick "${EWW_CMD} close control-center cc-closer; ${EWW_CMD} update sinks_open=false confirm=none"))
+            :onclick "bash $HOME/.config/waybar/eww/scripts/toggle.sh close"))
 
 (defwindow control-center [monitor]
   :monitor monitor
@@ -48,6 +61,14 @@
   :stacking "overlay"
   :namespace "eww-control-center"
   (control-center))
+
+;; Same spot and namespace as the control center, so Hyprland's blur rule applies.
+(defwindow notifications [monitor]
+  :monitor monitor
+  :geometry (geometry :x "15px" :y "8px" :width "360px" :anchor "top right")
+  :stacking "overlay"
+  :namespace "eww-control-center"
+  (notifications))
 
 ;; ---------------------------------------------------------------------------
 ;; Layout
@@ -174,3 +195,37 @@
                   :onclick "${EWW_CMD} update confirm=none sinks_open=false; ${EWW_CMD} close control-center cc-closer; ${confirm == 'reboot' ? 'systemctl reboot' : (confirm == 'poweroff' ? 'systemctl poweroff' : 'hyprctl dispatch exit')}"
           (box :class "btn danger"
             (label :text "Confirm")))))))
+
+;; ---------------------------------------------------------------------------
+;; Notifications panel
+;; ---------------------------------------------------------------------------
+
+(defwidget notifications []
+  ;; One panel, no inner card: the header sits straight on the panel and every
+  ;; notification is its own card. Spacing comes from CSS margins rather than
+  ;; :spacing, because the two revealers stay in the layout even when folded shut.
+  (box :class "cc" :orientation "v" :space-evenly false
+    ;; Fixed height, so the header doesn't shrink when the Clear button hides.
+    (box :class "notif-header" :orientation "h" :space-evenly false :height 28
+      (label :class "card-title" :hexpand true :halign "start" :valign "center" :text "Notifications")
+      (eventbox :class "btn-wrap" :cursor "pointer" :timeout "2s" :valign "center"
+                :visible {arraylength(notifs) > 0 && !notifs_clearing}
+                :onclick "bash $HOME/.config/waybar/eww/scripts/clear-notifications.sh &"
+        (box :class "btn"
+          (label :text "Clear"))))
+    ;; Slides in while the list folds up, so the panel goes straight to its empty size.
+    (revealer :transition "slidedown" :duration "220ms"
+              :reveal {arraylength(notifs) == 0 || notifs_folded}
+      (label :class "notif-empty" :halign "start" :text "No notifications"))
+    (revealer :transition "slideup" :duration "220ms" :reveal {!notifs_folded}
+      (box :orientation "v" :space-evenly false
+        (for n in notifs
+          ;; `d<n>` delays each entry's slide-out a little more than the one above it
+          (box :class "notif d${n.i} ${notifs_clearing ? 'out' : ''}"
+               :orientation "v" :space-evenly false :spacing 2
+            (box :orientation "h" :space-evenly false
+              (label :class "notif-meta" :hexpand true :halign "start" :limit-width 30 :text {n.app})
+              (label :class "notif-meta" :text {n.time}))
+            (label :class "notif-summary" :halign "start" :xalign 0 :wrap true :text {n.summary})
+            (label :class "notif-body" :halign "start" :xalign 0 :wrap true
+                   :visible {n.body != ""} :text {n.body})))))))

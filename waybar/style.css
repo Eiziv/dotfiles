@@ -74,8 +74,21 @@ tooltip {
 	color: rgba(255, 255, 255, 0.4);
 }
 
-#clock, #tray, #custom-control-center {
+#clock, #tray, #custom-notifications, #custom-control-center {
 	padding: 0 7px;
+}
+
+/* Notification count: a small white disc overlapping the bell's top right corner.
+   The margins shrink it from the bar's full height to 12px; the negative left margin
+   pulls it over the bell. Hidden by Waybar when there are no notifications. */
+#custom-notifications-count {
+	min-width: 6px;
+	padding: 0 3px;
+	margin: 7px 3px 17px -11px;
+	border-radius: 6px;
+	background: white;
+	color: #18181c;
+	font-size: 8px;
 }
 
 .imsh-cast-monitor.recording {

@@ -1,6 +1,11 @@
 #!/bin/bash
-# Opens/closes the control center. Called by the Waybar button.
-# Errors are shown as a notification and written to $XDG_RUNTIME_DIR/control-center.log
+# Opens/closes the Waybar flyout panels. Called by the Waybar buttons.
+#   toggle.sh [control-center|notifications]   toggle that panel (default: control-center)
+#   toggle.sh close                            close whichever panel is open
+# Only one panel is open at a time. Errors are shown as a notification and written to
+# $XDG_RUNTIME_DIR/control-center.log
+
+PANEL="${1:-control-center}"
 
 # Force a monitor by number (0, 1, ...). Leave empty to open on the monitor you clicked on.
 MONITOR=""
@@ -16,11 +21,30 @@ fail() {
 
 command -v eww >/dev/null 2>&1 || fail "eww is not installed"
 
-if "${EWW[@]}" active-windows 2>/dev/null | grep -q '^control-center:'; then
-  "${EWW[@]}" close control-center cc-closer
-  "${EWW[@]}" update sinks_open=false confirm=none
+case "$PANEL" in
+  control-center|notifications|close) ;;
+  *) fail "Unknown panel: $PANEL" ;;
+esac
+
+ACTIVE=$("${EWW[@]}" active-windows 2>/dev/null)
+is_open() { grep -q "^$1:" <<<"$ACTIVE"; }
+
+close_all() {
+  local open=()
+  for w in control-center notifications cc-closer; do
+    is_open "$w" && open+=("$w")
+  done
+  [ ${#open[@]} -gt 0 ] && "${EWW[@]}" close "${open[@]}"
+  "${EWW[@]}" update sinks_open=false confirm=none notifs_open=false
+}
+
+# Clicking the button of the panel that is open (or asking to close) just closes it;
+# clicking the other button swaps panels.
+if [ "$PANEL" = close ] || is_open "$PANEL"; then
+  close_all
   exit 0
 fi
+close_all
 
 # The focused monitor is the one the bar button was clicked on. Hyprland numbers monitors
 # (HDMI-A-2 = 1) but Eww uses GTK's own numbering, so translate by matching screen positions.
@@ -49,8 +73,13 @@ print(idx)
 fi
 MONITOR="${MONITOR:-1}"
 
-out=$("${EWW[@]}" open-many cc-closer control-center \
-        --arg "cc-closer:monitor=$MONITOR" --arg "control-center:monitor=$MONITOR" 2>&1) || {
+if [ "$PANEL" = notifications ]; then
+  # Fill the list before the panel appears; Eww then keeps it fresh while it is open.
+  "${EWW[@]}" update notifs="$(python3 "$DIR/scripts/notifications.py")" notifs_open=true
+fi
+
+out=$("${EWW[@]}" open-many cc-closer "$PANEL" \
+        --arg "cc-closer:monitor=$MONITOR" --arg "$PANEL:monitor=$MONITOR" 2>&1) || {
   printf '%s\n' "$out" > "$LOG"
   fail "Could not open the panel: $(printf '%s' "$out" | head -1)"
 }

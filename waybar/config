@@ -24,6 +24,18 @@
                     "on-scroll-down": "shift_down"
                     }
     },
+    "custom/notifications": {
+      "format": "<span size='12288'>󰂚</span>",
+      "tooltip": false,
+      "on-click": "bash $HOME/.config/waybar/eww/scripts/toggle.sh notifications"
+    },
+    "custom/notifications-count": {
+      "exec": "python3 $HOME/.config/waybar/scripts/notification-count.py",
+      "return-type": "json",
+      "hide-empty-text": true,
+      "tooltip": false,
+      "on-click": "bash $HOME/.config/waybar/eww/scripts/toggle.sh notifications"
+    },
     "custom/control-center": {
       "format": " ",
       "tooltip": false,
@@ -70,6 +82,8 @@
     ],
     "modules-right": [
       "tray",
+      "custom/notifications",
+      "custom/notifications-count",
       "custom/control-center"
     ],
     "position": "top",
