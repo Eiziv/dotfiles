@@ -220,12 +220,16 @@
     (revealer :transition "slideup" :duration "220ms" :reveal {!notifs_folded}
       (box :orientation "v" :space-evenly false
         (for n in notifs
-          ;; `d<n>` delays each entry's slide-out a little more than the one above it
-          (box :class "notif d${n.i} ${notifs_clearing ? 'out' : ''}"
-               :orientation "v" :space-evenly false :spacing 2
-            (box :orientation "h" :space-evenly false
-              (label :class "notif-meta" :hexpand true :halign "start" :limit-width 30 :text {n.app})
-              (label :class "notif-meta" :text {n.time}))
-            (label :class "notif-summary" :halign "start" :xalign 0 :wrap true :text {n.summary})
-            (label :class "notif-body" :halign "start" :xalign 0 :wrap true
-                   :visible {n.body != ""} :text {n.body})))))))
+          ;; Click: jump to the app that sent it (scripts/open-notification.py). Only the
+          ;; numeric id is passed, never the notification's own text.
+          (eventbox :class "notif-wrap" :cursor "pointer" :timeout "3s"
+                    :onclick "python3 $HOME/.config/waybar/eww/scripts/open-notification.py ${n.id} &"
+            ;; `d<n>` delays each entry's slide-out a little more than the one above it
+            (box :class "notif d${n.i} ${notifs_clearing ? 'out' : ''}"
+                 :orientation "v" :space-evenly false :spacing 2
+              (box :orientation "h" :space-evenly false
+                (label :class "notif-meta" :hexpand true :halign "start" :limit-width 30 :text {n.app})
+                (label :class "notif-meta" :text {n.time}))
+              (label :class "notif-summary" :halign "start" :xalign 0 :wrap true :text {n.summary})
+              (label :class "notif-body" :halign "start" :xalign 0 :wrap true
+                     :visible {n.body != ""} :text {n.body}))))))))

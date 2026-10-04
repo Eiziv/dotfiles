@@ -16,6 +16,11 @@ hide_duplicate_count = true
 separator_height = 0
 fullscreen = pushback
 corner_radius = 15
+# Left click does what the notification is for (e.g. opens the chat), then closes
+# it. Middle click only dismisses it, right click dismisses all.
+mouse_left_click = do_action, close_current
+mouse_middle_click = close_current
+mouse_right_click = close_all
 progress_bar = true
 
 

@@ -246,6 +246,10 @@ scale slider {
   }
 }
 
+.notif-wrap:hover .notif {
+  background-color: $card-hover;
+}
+
 // Stagger: each entry leaves 45ms after the one above it.
 @for $i from 0 through 9 {
   .notif.d#{$i} {
