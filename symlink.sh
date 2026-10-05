@@ -15,9 +15,9 @@ ln kvantum/RiceDark.kvconfig ~/.config/Kvantum/RiceDark/RiceDark.kvconfig
 sh kvantum/install.sh
 ln kde/kdeglobals ~/.config/kdeglobals
 ln nvim ~/.config/nvim
-# Only the theme: the rest of ~/.config/filebrowser is settings the app writes itself.
-mkdir -vp ~/.config/filebrowser
-ln filebrowser/theme.css ~/.config/filebrowser/theme.css
+# Only the theme: the rest of ~/.config/philly is settings the app writes itself.
+mkdir -vp ~/.config/philly
+ln philly/theme.css ~/.config/philly/theme.css
 if [ -f ~/.config/mozilla/firefox/profiles.ini ]; then
   profile="$(yq -r '[to_entries[] | select(.key | test("^Install"))][0].value.Default' ~/.config/mozilla/firefox/profiles.ini)"
   profilePath=~/.config/mozilla/firefox/"$profile"
