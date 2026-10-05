@@ -290,13 +290,6 @@ hl.on("hyprland.start", function()
             match = { class = "^discord$" },
             workspace = "3 silent",
         }),
-        -- Tray apps: scripts/autostart-apps closes whatever window they open, so
-        -- open it out of sight.
-        hl.window_rule({
-            name = "startup-tray-apps",
-            match = { class = "^(opendeck|WowUpCf)$" },
-            workspace = "special:autostart silent",
-        }),
         hl.window_rule({
             name = "startup-faugus",
             match = { class = "^io\\.github\\.Faugus\\.faugus-launcher$" },
@@ -311,6 +304,34 @@ hl.on("hyprland.start", function()
             rule:set_enabled(false)
         end
     end, { timeout = 120000, type = "oneshot" })
+
+    -- WowUp can't start hidden, so the window it opens at login is sent to a hidden
+    -- workspace and closed again, which leaves it in the tray. That rule must not
+    -- outlive the one window: it is dropped as soon as the window has opened (or
+    -- after a minute if none came), so opening WowUp yourself right after login
+    -- lands on your workspace like any other window.
+    local wowup_rule = hl.window_rule({
+        name = "startup-wowup",
+        match = { class = "^WowUpCf$" },
+        workspace = "special:autostart silent",
+    })
+    local wowup_pending = true
+    local function wowup_done()
+        wowup_pending = false
+        wowup_rule:set_enabled(false)
+    end
+    hl.on("window.open", function(window)
+        if wowup_pending and window.class == "WowUpCf" then
+            wowup_done()
+            -- closing it from inside the open event is too early and gets ignored
+            local address = window.address
+            hl.timer(function()
+                hl.dispatch(hl.dsp.window.close({ window = "address:" .. address }))
+            end, { timeout = 300, type = "oneshot" })
+        end
+    end)
+    hl.timer(wowup_done, { timeout = 60000, type = "oneshot" })
+
     hl.exec_cmd("~/.config/hypr/scripts/autostart-apps")
    -- hl.exec_cmd("gsettings set org.gnome.desktop.interface color-scheme prefer-dark")
    -- hl.exec_cmd("gsettings set org.gnome.desktop.interface gtk-theme Adwaita-dark")

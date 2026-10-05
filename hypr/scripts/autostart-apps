@@ -1,15 +1,15 @@
 #!/bin/bash
 # Apps opened at login. Run once by hyprland.lua (hl.on("hyprland.start")).
 #
-#   OpenDeck, WowUp   to the tray: any window they open is closed again
+#   OpenDeck, WowUp   to the tray
 #   Faugus            its window on workspace 1
 #   Signal, Discord   workspace 3, Signal on top and Discord below it
 #
 # Which workspace a window lands on (and Faugus' position) is decided by the
-# temporary "startup-*" window rules next to the call in hyprland.lua; this script
-# starts the apps, closes the tray apps' windows and stacks Signal above Discord.
-# Apps that are already running are left alone, so the script is safe to run again
-# by hand.
+# temporary "startup-*" window rules next to the call in hyprland.lua, which also
+# closes the window WowUp opens. This script starts the apps and then stacks Signal
+# above Discord. Apps that are already running are left alone, so it is safe to run
+# again by hand.
 
 SIGNAL_HEIGHT=802 # px; Discord gets the rest of the (portrait) monitor
 
@@ -23,33 +23,10 @@ for _ in $(seq 40); do
   sleep 0.5
 done
 
-# Closes the first window of class $1 that shows up within $2 seconds. Both tray
-# apps keep running in the tray when their window is closed. The startup rules open
-# these windows on a hidden special workspace, so they never appear on screen.
-close_when_shown() {
-  local address
-  for _ in $(seq $(($2 * 2))); do
-    address=$(hyprctl clients -j | python3 -c '
-import json, sys
-print(next((c["address"] for c in json.load(sys.stdin) if c["class"] == sys.argv[1]), ""))' "$1")
-    if [ -n "$address" ]; then
-      dispatch "hl.dsp.window.close({ window = \"address:$address\" })"
-      return
-    fi
-    sleep 0.5
-  done
-}
-
-# Both have a start-hidden flag; WowUp shows its window regardless, and the same
-# safety net is kept for OpenDeck in case its flag ever stops working.
-if ! running '^/usr/bin/opendeck'; then
-  launch opendeck --hide
-  close_when_shown opendeck 15 &
-fi
-if ! running '^/opt/wowup-cf/wowup-cf'; then
-  launch wowup-cf --hidden
-  close_when_shown WowUpCf 40 &
-fi
+# OpenDeck starts hidden with its flag. WowUp has one too but shows its window
+# anyway; hyprland.lua closes that window (see "startup-wowup" there).
+running '^/usr/bin/opendeck' || launch opendeck --hide
+running '^/opt/wowup-cf/wowup-cf' || launch wowup-cf --hidden
 running 'faugus\.(launcher|tray_only)' || launch faugus-launcher
 running 'signal-desktop' || launch signal-desktop
 running '/Discord( |$)' || launch discord
