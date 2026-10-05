@@ -1,0 +1,56 @@
+/* Files (~/git/filebrowser): how the desktop client looks.
+
+   Same recipe as Waybar, walker and the control centre: near-transparent black
+   over the compositor's blur, white text, no borders. The client's window is
+   transparent wherever this theme is, so decoration.blur in hypr/hyprland.lua
+   does the frosting, exactly as it does for kitty.
+
+   Everything is under [data-desktop], so the same daemon opened in a web
+   browser (which has nothing to blur) keeps its opaque theme. */
+
+:root[data-desktop] {
+	color-scheme: dark;
+	font-family: "NotoSans Nerd Font", "Noto Sans", sans-serif;
+	--mono: "JetBrainsMono Nerd Font", "JetBrains Mono", monospace;
+
+	--text: #ffffff;
+	--muted: rgba(255, 255, 255, 0.55);
+
+	/* Layers of the same black: the window, then one more layer everywhere on
+	   top of it. Bars, sidebar and file list get the same one, so the window
+	   reads as a single sheet of glass. */
+	--window: rgba(0, 0, 0, 0.1);
+	--surface: rgba(0, 0, 0, 0.1);
+	--content: rgba(0, 0, 0, 0.1);
+	--field: rgba(0, 0, 0, 0.16);
+	--border: transparent;
+
+	/* Menus float over the file list, which Hyprland can't blur for them, so
+	   they are nearly solid (the control centre's ink colour) to stay legible. */
+	--popup: rgba(24, 24, 28, 0.92);
+
+	/* Monochrome highlights, like the workspace buttons' hover. */
+	--hover: rgba(255, 255, 255, 0.08);
+	--selected: rgba(255, 255, 255, 0.12);
+	--accent: rgba(255, 255, 255, 0.2);
+	--on-accent: #ffffff;
+	--outline: rgba(255, 255, 255, 0.6);
+	--danger: #ff6b6b;
+
+	/* Hyprland rounds windows by 10px; controls and rows match it. */
+	--radius: 10px;
+	--row-radius: 10px;
+	--row-inset: 6px;
+
+	/* File type icons, in kitty's palette. */
+	--type-folder: #82aaff;
+	--type-image: #e9c1ff;
+	--type-video: #ff8288;
+	--type-audio: #89ebff;
+	--type-archive: #f4d69f;
+	--type-code: #b4e88d;
+	--type-document: #ff8b92;
+	--type-sheet: #ddffa7;
+	--type-font: rgba(255, 255, 255, 0.55);
+	--type-exec: #9cc4ff;
+}
