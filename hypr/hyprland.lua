@@ -123,6 +123,17 @@ hl.window_rule({
 --     opacity = "0.90 0.80",
 -- })
 
+-- Claude's desktop app creates its window opaque (transparent: false in the
+-- Electron bundle) and has no user stylesheet, so unlike kitty and Dolphin it
+-- can't put alpha in the background only. A forced window opacity is the
+-- closest it gets: decoration.blur frosts what shows through, at the cost of
+-- the text being translucent too.
+hl.window_rule({
+    name = "claude-frosted",
+    match = { class = "^com\\.anthropic\\.Claude$" },
+    opacity = "0.80 0.80",
+})
+
 --windowrulev2 = maxsize 1803 1153,title:^(RuneLite)$
 --windowrulev2 = maxsize 1803 1153,title:^(RuneLite)$
 
