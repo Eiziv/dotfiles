@@ -1,0 +1,106 @@
+#!/bin/bash
+# Starts Signal Desktop with theme.css applied.
+#
+# Signal has no user stylesheet, so this keeps a patched copy of the pacman-installed
+# app in ~/.local/share/signal-themed: the same files (reflinked, so they take no
+# extra space on btrfs) with a repacked app.asar that
+#   1. loads theme.css as stylesheets/custom.css after Signal's own stylesheets, and
+#   2. creates the main window transparent, so Hyprland's blur shows through.
+# Nothing else is changed, and /usr/lib/signal-desktop is never touched. The copy
+# uses your normal Signal profile (~/.config/Signal) and the same start-up flags.
+#
+# The copy is rebuilt when the Signal package or theme.css changes. If a Signal
+# update moves one of the two places being patched, the build stops and stock Signal
+# is started instead, with a notification saying so.
+#
+#   launch [signal arguments]   build if needed, then start Signal
+#   launch --build              only (re)build the copy and report
+
+SRC=/usr/lib/signal-desktop
+HERE="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+THEME="$HERE/theme.css"
+OUT="${XDG_DATA_HOME:-$HOME/.local/share}/signal-themed"
+RECIPE=1 # raise to force a rebuild after changing the patching below
+
+# Everything the copy depends on; a different stamp means it is out of date.
+stamp() {
+  pacman -Q signal-desktop 2>/dev/null
+  stat -c 'app.asar %s %Y' "$SRC/resources/app.asar"
+  sha256sum <"$THEME"
+  echo "recipe $RECIPE"
+}
+
+build() {
+  command -v asar >/dev/null || { echo "asar is not installed (pacman -S asar)"; return 1; }
+  mkdir -p "$(dirname "$OUT")"
+  local tmp
+  tmp=$(mktemp -d "$OUT.build.XXXXXX") || return 1
+  (
+    set -e
+    cd "$tmp"
+    cp -a --reflink=auto "$SRC" signal-desktop
+    # The sandbox helper only works setuid root, which a copy can't be.
+    ln -sf "$SRC/chrome-sandbox" signal-desktop/chrome-sandbox
+
+    asar extract "$SRC/resources/app.asar" app
+    cp "$THEME" app/stylesheets/custom.css
+
+    # 1. Load the theme last, so it wins over Signal's own stylesheets.
+    anchor='<link href="stylesheets/tailwind.css" rel="stylesheet" type="text/css" />'
+    grep -qF "$anchor" app/background.html
+    sed -i "s|$anchor|&\n    <link href=\"stylesheets/custom.css\" rel=\"stylesheet\" type=\"text/css\" />|" app/background.html
+    grep -qF 'href="stylesheets/custom.css"' app/background.html
+
+    # 2. Transparent main window. It is the only BrowserWindow created with
+    #    sandbox:false, which is what the pattern keys on; exactly one match or stop.
+    sed -i 's/backgroundColor:[A-Za-z0-9_$]*,\(webPreferences:{[^}]*sandbox:!1\)/transparent:!0,backgroundColor:`#00000000`,\1/' app/bundles/main.js
+    [ "$(grep -o 'transparent:!0,backgroundColor:`#00000000`' app/bundles/main.js | wc -l)" = 1 ]
+
+    rm -rf signal-desktop/resources/app.asar signal-desktop/resources/app.asar.unpacked
+    asar pack --unpack '*.node' app signal-desktop/resources/app.asar
+    rm -rf app
+    stamp >stamp
+  ) || { rm -rf "$tmp"; return 1; }
+
+  rm -rf "$OUT.old"
+  [ -e "$OUT" ] && mv "$OUT" "$OUT.old"
+  mv "$tmp" "$OUT" && rm -rf "$OUT.old"
+}
+
+# Same optional flags file as /usr/bin/signal-desktop.
+FLAGS_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/signal-desktop-flags.conf"
+FLAGS=""
+[ -f "$FLAGS_FILE" ] && FLAGS="$(sed 's/#.*//' "$FLAGS_FILE" | tr '\n' ' ')"
+
+THEMED="$OUT/signal-desktop/signal-desktop"
+up_to_date() { [ -x "$THEMED" ] && [ "$(cat "$OUT/stamp" 2>/dev/null)" = "$(stamp)" ]; }
+running() { pgrep -f "^$THEMED" >/dev/null 2>&1; }
+
+if [ "${1:-}" = --build ]; then
+  if running; then
+    echo "Signal is running from the themed copy; quit it first."
+    exit 1
+  fi
+  build && echo "Built $OUT ($(pacman -Q signal-desktop))"
+  exit
+fi
+
+# Never swap the files out from under a running Signal; a second start only raises
+# its window anyway. The rebuild then happens the next time Signal starts cold.
+if running; then
+  # shellcheck disable=SC2086
+  exec "$THEMED" $FLAGS "$@"
+fi
+
+if ! up_to_date && ! log=$(build 2>&1); then
+  printf '%s\n' "$log" >"${XDG_RUNTIME_DIR:-/tmp}/signal-themed.log"
+  notify-send -a Signal "Signal theme not applied" \
+    "The themed copy could not be built, so Signal started unthemed. Log: ${XDG_RUNTIME_DIR:-/tmp}/signal-themed.log" 2>/dev/null
+fi
+
+if up_to_date; then
+  # shellcheck disable=SC2086
+  exec "$THEMED" $FLAGS "$@"
+fi
+# shellcheck disable=SC2086
+exec "$SRC/signal-desktop" $FLAGS "$@"

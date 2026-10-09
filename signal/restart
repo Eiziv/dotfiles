@@ -1,0 +1,25 @@
+#!/bin/bash
+# Quits Signal and starts it again through ./launch, which rebuilds the themed copy
+# if theme.css changed. Signal reads the theme only at start-up, so run this after
+# editing theme.css. The window is put back on the workspace it was on.
+
+HERE="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+
+workspace=$(hyprctl clients -j | python3 -c '
+import json, sys
+print(next((c["workspace"]["name"] for c in json.load(sys.stdin) if c["class"] == "signal"), ""))')
+
+pid=$(pgrep -f '/signal-desktop/signal-desktop$' | head -1)
+if [ -n "$pid" ]; then
+  kill -TERM "$pid"
+  for _ in $(seq 60); do
+    kill -0 "$pid" 2>/dev/null || break
+    sleep 0.25
+  done
+fi
+
+if [ -n "$workspace" ]; then
+  hyprctl dispatch "hl.dsp.exec_cmd(\"$HERE/launch\", { workspace = \"$workspace silent\" })" >/dev/null
+else
+  setsid -f "$HERE/launch" >/dev/null 2>&1
+fi

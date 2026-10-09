@@ -1,0 +1,15 @@
+[Desktop Entry]
+Type=Application
+Name=Signal
+Comment=Signal - Private Messenger
+Comment[de]=Signal - Sicherer Messenger
+Icon=signal-desktop
+# The themed copy (see signal/launch in the dotfiles); otherwise identical to
+# /usr/share/applications/signal.desktop, which this entry overrides.
+Exec=/home/vizie/.config/signal-themed/launch -- %u
+Terminal=false
+Categories=Network;InstantMessaging;
+StartupWMClass=signal
+MimeType=x-scheme-handler/sgnl;x-scheme-handler/signalcaptcha;
+Keywords=sgnl;chat;im;messaging;messenger;security;privat;
+X-GNOME-UsesNotifications=true

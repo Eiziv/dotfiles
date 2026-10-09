@@ -18,6 +18,11 @@ ln nvim ~/.config/nvim
 # Only the theme: the rest of ~/.config/philly is settings the app writes itself.
 mkdir -vp ~/.config/philly
 ln philly/theme.css ~/.config/philly/theme.css
+# Signal: the theme, the launcher that builds a themed copy of the app, and an
+# app-menu entry that starts Signal through that launcher.
+ln signal ~/.config/signal-themed
+mkdir -vp ~/.local/share/applications
+ln signal/signal.desktop ~/.local/share/applications/signal.desktop
 if [ -f ~/.config/mozilla/firefox/profiles.ini ]; then
   profile="$(yq -r '[to_entries[] | select(.key | test("^Install"))][0].value.Default' ~/.config/mozilla/firefox/profiles.ini)"
   profilePath=~/.config/mozilla/firefox/"$profile"

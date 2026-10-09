@@ -1,0 +1,76 @@
+/* Signal Desktop: how the main window looks.
+
+   Same recipe as Philly, Waybar, walker and the control centre: near-transparent
+   black over the compositor's blur, white text, no borders, monochrome highlights.
+   Signal has no user stylesheet, so signal/launch builds a copy of the app with this
+   file added as stylesheets/custom.css and the main window made transparent;
+   decoration.blur in hypr/hyprland.lua then does the frosting, as it does for kitty.
+
+   Signal draws nearly everything from its --axo-color-* variables, so most of the
+   theme is just new values for those. It assumes Signal's dark theme (Settings >
+   Appearance, or "System" with a dark desktop). */
+
+:root {
+	/* The window, and the panes that sit straight on it: glass. */
+	--axo-color-surface-primary: transparent;
+	--axo-color-surface-secondary: transparent;
+	--axo-color-legacy-conversation-header-bg: transparent;
+
+	/* One more layer of the same black for things drawn on the glass. */
+	--axo-color-surface-tertiary: rgba(0, 0, 0, 0.16);
+	--axo-color-surface-quaternary: rgba(0, 0, 0, 0.16);
+	--axo-color-surface-card: rgba(0, 0, 0, 0.16);
+
+	/* Message bubbles and the text field, monochrome: other people's messages a
+	   faint white, your own a stronger one (Philly's hover and accent). */
+	--axo-color-surface-message-incoming: rgba(255, 255, 255, 0.08);
+	--axo-color-surface-message-outgoing: rgba(255, 255, 255, 0.2);
+
+	/* Menus and dialogs float over content Hyprland can't blur for them, so they
+	   are nearly solid (the control centre's ink colour) to stay legible. */
+	--axo-color-material-primary: rgba(24, 24, 28, 0.92);
+	--axo-color-material-secondary: rgba(24, 24, 28, 0.92);
+	--axo-color-material-tertiary: rgba(24, 24, 28, 0.92);
+	--axo-color-material-tertiary-pressed: rgba(44, 44, 50, 0.92);
+	--axo-color-material-quaternary: rgba(24, 24, 28, 0.92);
+	--axo-color-material-quaternary-pressed: rgba(44, 44, 50, 0.92);
+	--axo-color-material-dialog: rgba(24, 24, 28, 0.92);
+
+	/* White text; secondary text at the control centre's dim. */
+	--axo-color-label-primary: #ffffff;
+	--axo-color-label-secondary: rgba(255, 255, 255, 0.55);
+	--axo-color-label-placeholder: rgba(255, 255, 255, 0.4);
+
+	/* No borders; a white ring for keyboard focus and selection. */
+	--axo-color-border-primary: transparent;
+	--axo-color-border-secondary: transparent;
+	--axo-color-border-focused-outer: rgba(255, 255, 255, 0.6);
+	--axo-color-border-selected: rgba(255, 255, 255, 0.6);
+
+	/* Signal's blue accent becomes white: buttons, badges, links. */
+	--axo-color-brand-primary: #ffffff;
+	--axo-color-fill-accent: rgba(255, 255, 255, 0.2);
+	--axo-color-fill-accent-pressed: rgba(255, 255, 255, 0.28);
+	--axo-color-fill-accent-tint: rgba(255, 255, 255, 0.12);
+	--axo-color-fill-accent-tint-pressed: rgba(255, 255, 255, 0.16);
+	--axo-color-label-accent: #ffffff;
+}
+
+/* The one layer of black behind everything. */
+html {
+	background: rgba(0, 0, 0, 0.1);
+}
+
+/* The desktop's font. Signal's emoji fonts stay in the list. */
+body,
+button,
+input,
+textarea {
+	font-family: "NotoSans Nerd Font", "Noto Sans", "Signal Emoji Large", "Signal Emoji Small", sans-serif;
+}
+
+/* Your own bubbles ignore the per-chat colour (ultramarine, crimson, ...), which
+   Signal sets through classes and inline styles of its own. */
+.module-message__container--outgoing[class] {
+	background: var(--axo-color-surface-message-outgoing) !important;
+}

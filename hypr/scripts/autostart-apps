@@ -28,7 +28,7 @@ done
 running '^/usr/bin/opendeck' || launch opendeck --hide
 running '^/opt/wowup-cf/wowup-cf' || launch wowup-cf --hidden
 running 'faugus\.(launcher|tray_only)' || launch faugus-launcher
-running 'signal-desktop' || launch signal-desktop
+running 'signal-desktop' || launch ~/.config/signal-themed/launch # themed copy, see signal/launch
 running '/Discord( |$)' || launch discord
 
 # --- Stack Signal above Discord ------------------------------------------------
