@@ -174,9 +174,9 @@ hl.layer_rule({
     blur = true,
 })
 
-hl.bind(mod .. " + SHIFT + S", hl.dsp.exec_cmd("/nix/store/bymxsrjyrphiz7ds61mw9fcg34h57x02-imsh-shot/bin/imsh-shot area -Cufa@~/.config/keys/scrnis -s1"))
-hl.bind(mod .. " + SHIFT + F", hl.dsp.exec_cmd("/nix/store/bymxsrjyrphiz7ds61mw9fcg34h57x02-imsh-shot/bin/imsh-shot screen -Cua@~/.config/keys/scrnis"))
-hl.bind(mod .. " + SHIFT + R", hl.dsp.exec_cmd("/nix/store/bymxsrjyrphiz7ds61mw9fcg34h57x02-imsh-shot/bin/imsh-cast -Cua@~/.config/keys/scrnis"))
+hl.bind(mod .. " + SHIFT + S", hl.dsp.exec_cmd("imsh-shot area -Cufa@~/.config/keys/scrnis -s1"))
+hl.bind(mod .. " + SHIFT + F", hl.dsp.exec_cmd("imsh-shot screen -Cua@~/.config/keys/scrnis"))
+hl.bind(mod .. " + SHIFT + R", hl.dsp.exec_cmd("imsh-cast -Cua@~/.config/keys/scrnis"))
 hl.bind(mod .. " + Return", hl.dsp.exec_cmd("walker"))
 hl.bind(mod .. " + T", hl.dsp.exec_cmd("kitty"))
 hl.bind(mod .. " + W", hl.dsp.exec_cmd("firefox"))
