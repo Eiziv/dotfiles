@@ -35,6 +35,8 @@
 	--accent: rgba(255, 255, 255, 0.2);
 	--on-accent: #ffffff;
 	--outline: rgba(255, 255, 255, 0.6);
+	/* How full a disk is, in the sidebar: white, on the faint track behind it. */
+	--meter: rgba(255, 255, 255, 0.75);
 	--danger: #ff6b6b;
 
 	/* Hyprland rounds windows by 10px; controls and rows match it. */
