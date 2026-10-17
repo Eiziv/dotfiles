@@ -4,9 +4,8 @@ alias ln='ln -Tsrfv'
 ln dunst ~/.config/dunst
 ln hypr ~/.config/hypr
 ln kitty ~/.config/kitty
-ln walker ~/.config/walker
+ln fuzzel ~/.config/fuzzel
 ln waybar ~/.config/waybar
-ln elephant ~/.config/elephant
 ln qt6ct ~/.config/qt6ct
 mkdir -vp ~/.config/Kvantum
 ln kvantum/kvantum.kvconfig ~/.config/Kvantum/kvantum.kvconfig

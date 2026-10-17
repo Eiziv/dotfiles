@@ -1,0 +1,7 @@
+# Apps shown at the top of fuzzel's list, in this order. One desktop file name
+# per line, as in /usr/share/applications or ~/.local/share/applications.
+firefox.desktop
+kitty.desktop
+signal.desktop
+discord.desktop
+steam.desktop

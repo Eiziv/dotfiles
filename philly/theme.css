@@ -1,6 +1,6 @@
 /* Philly (~/git/philly): how the desktop client looks.
 
-   Same recipe as Waybar, walker and the control centre: near-transparent black
+   Same recipe as Waybar, fuzzel and the control centre: near-transparent black
    over the compositor's blur, white text, no borders. The client's window is
    transparent wherever this theme is, so decoration.blur in hypr/hyprland.lua
    does the frosting, exactly as it does for kitty.

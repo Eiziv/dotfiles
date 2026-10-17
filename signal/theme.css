@@ -1,6 +1,6 @@
 /* Signal Desktop: how the main window looks.
 
-   Same recipe as Philly, Waybar, walker and the control centre: near-transparent
+   Same recipe as Philly, Waybar, fuzzel and the control centre: near-transparent
    black over the compositor's blur, white text, no borders, monochrome highlights.
    Signal has no user stylesheet, so signal/launch builds a copy of the app with this
    file added as stylesheets/custom.css and the main window made transparent;

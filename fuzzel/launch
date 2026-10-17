@@ -1,0 +1,24 @@
+#!/bin/bash
+# Opens fuzzel with the apps in ./favorites at the top of its list. Hyprland's
+# mod + Return runs this (hyprland.lua).
+#
+# Fuzzel can't pin apps; it sorts by how often each one was launched, counted in
+# its cache ($XDG_CACHE_HOME/fuzzel, lines of "name.desktop|count"). So before
+# every start this sets the favourites' counts far above anything normal use
+# reaches, highest first, and leaves every other app's count as it is.
+
+dir="$(dirname "$(readlink -f "$0")")"
+cache="${XDG_CACHE_HOME:-$HOME/.cache}/fuzzel"
+touch "$cache"
+
+awk -F'|' -v OFS='|' '
+  FNR == NR {
+    sub(/#.*/, ""); gsub(/[ \t]/, "")
+    if ($0 != "" && !($0 in fav)) { fav[$0] = 1000000 - n++; order[n] = $0 }
+    next
+  }
+  !($1 in fav) && $0 != "" { print }
+  END { for (i = 1; i <= n; i++) print order[i], fav[order[i]] }
+' "$dir/favorites" "$cache" > "$cache.tmp" && mv "$cache.tmp" "$cache"
+
+exec fuzzel "$@"

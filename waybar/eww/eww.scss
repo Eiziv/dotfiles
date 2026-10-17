@@ -3,7 +3,7 @@
 $fg: #ffffff;
 $dim: rgba(255, 255, 255, 0.55);
 // Black-based translucency (not white-tinted) to match the rest of the rice
-// (Waybar's #waybar, walker, dunst all use rgba(0, 0, 0, ...) over the
+// (Waybar's #waybar, fuzzel, dunst all use rgba(0, 0, 0, ...) over the
 // compositor blur, rather than a lightened panel color).
 $card: rgba(0, 0, 0, 0.16);
 $card-hover: rgba(0, 0, 0, 0.26);
@@ -21,7 +21,7 @@ $danger: #ff6b6b;
 // ---- panel -----------------------------------------------------------------
 
 .cc {
-  // Same near-transparent black as #waybar / walker's .box-wrapper; the
+  // Same near-transparent black as #waybar / fuzzel's background; the
   // compositor's own blur (layerrule-4 in hyprland.lua) does the rest, no
   // border, same as the rest of the rice.
   background-color: rgba(0, 0, 0, 0.1);

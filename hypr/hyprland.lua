@@ -150,7 +150,7 @@ hl.layer_rule({
 hl.layer_rule({
     name = "layerrule-2",
     match = {
-        namespace = "walker",
+        namespace = "launcher", -- fuzzel
     },
     ignore_alpha = 0,
     blur = true,
@@ -177,7 +177,7 @@ hl.layer_rule({
 hl.bind(mod .. " + SHIFT + S", hl.dsp.exec_cmd("imsh-shot area -Cufa@~/.config/keys/scrnis -s1"))
 hl.bind(mod .. " + SHIFT + F", hl.dsp.exec_cmd("imsh-shot screen -Cua@~/.config/keys/scrnis"))
 hl.bind(mod .. " + SHIFT + R", hl.dsp.exec_cmd("imsh-cast -Cua@~/.config/keys/scrnis"))
-hl.bind(mod .. " + Return", hl.dsp.exec_cmd("walker"))
+hl.bind(mod .. " + Return", hl.dsp.exec_cmd("~/.config/fuzzel/launch"))
 hl.bind(mod .. " + T", hl.dsp.exec_cmd("kitty"))
 hl.bind(mod .. " + W", hl.dsp.exec_cmd("firefox"))
 hl.bind(mod .. " + Q", hl.dsp.window.close())
@@ -277,8 +277,6 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("hyprpaper")
     -- hl.exec_cmd("env LC_TIME=en_GB.UTF-8 waybar")
     hl.exec_cmd("dunst")
-    hl.exec_cmd("walker --gapplication-service")
-    hl.exec_cmd("elephant")
     hl.exec_cmd("eww --config ~/.config/waybar/eww daemon") -- control-center flyout; starts ready so the first click on the Waybar button opens instantly
     hl.exec_cmd("blueman-applet")
     hl.exec_cmd("nm-applet --indicator")
